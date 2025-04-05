@@ -1,5 +1,5 @@
 <template>
-    <div class="flex h-screen">
+    <div class="flex h-screen min-w-screen">
         <!-- Main Display Panel -->
         <div class="min-w-0" :style="{ width: `${mainPanelWidth}px` }">
             <slot name="main"></slot>

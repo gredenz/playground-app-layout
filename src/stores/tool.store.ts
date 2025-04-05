@@ -36,9 +36,7 @@ export const useToolStore = defineStore('tool', () => {
 
       // 2. Load the corresponding main component
       const mainComponent = toolToMainComponentMap[tool]
-      const mainComponentModule = await import(
-        `@/components/mainComponentTools/${mainComponent}.vue`
-      )
+      const mainComponentModule = await import(`@/components/mainComponents/${mainComponent}.vue`)
       activeMainComponent.value = markRaw(mainComponentModule.default)
     } catch (error) {
       console.error('Failed to load components:', error)
