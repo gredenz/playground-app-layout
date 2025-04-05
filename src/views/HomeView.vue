@@ -5,12 +5,6 @@
 
         <!-- Debug info -->
         <div class="bg-blue-300 flex-col h-full">
-          <div class="p-2 bg-yellow-100 text-sm">
-            <p>Active Tool: {{ toolStore.activeMainComponentTool }}</p>
-            <p>Component Loaded: {{ activeMainComponent !== null }}</p>
-            <p>Component Type: {{ typeof activeMainComponent }}</p>
-            <p>Is Loading: {{ isLoading }}</p>
-          </div>
           <component :is="toolStore.activeMainComponent" v-if="toolStore.activeMainComponent" />
           <div v-else class="p-4">Select a tool to get started (or component failed to load)</div>
         </div>
@@ -19,12 +13,6 @@
     </template>
     <template #middle>
       <div class="bg-blue-300 flex h-full">
-        <div class="p-2 bg-yellow-100 text-sm">
-          <p>Active Tool: {{ toolStore.activeTool }}</p>
-          <p>Component Loaded: {{ activeToolComponent !== null }}</p>
-          <p>Component Type: {{ typeof activeToolComponent }}</p>
-          <p>Is Loading: {{ isLoading }}</p>
-        </div>
         <component :is="toolStore.activeToolComponent" v-if="toolStore.activeToolComponent" />
         <div v-else class="p-4">Select a tool to get started (or component failed to load)</div>
       </div>

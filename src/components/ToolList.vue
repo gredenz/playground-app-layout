@@ -1,11 +1,19 @@
 <template>
-    <div class="bg-green-300 border-l-2 flex flex-col h-full border-green-900 p-2">
+    <div class="bg-green-300 border-l-2 flex flex-col space-y-2 h-full border-green-900 p-2">
         <h3 class="font-bold mb-4">Tools</h3>
-        <div class="space-y-2">
-            <button v-for="tool in tools" :key="tool" @click="toolStore.setActiveTool(tool as Tool)"
+        <div>
+            <button @click="toolStore.setActiveTool('SeoScore')"
                 class="w-full px-3 py-2 rounded text-left transition-colors"
-                :class="toolStore.activeTool === tool ? 'bg-green-500 text-white' : 'hover:bg-green-200'">
-                {{ tool.charAt(0).toUpperCase() + tool.slice(1) }}
+                :class="toolStore.activeTool === 'SeoScore' ? 'bg-green-500 text-white' : 'hover:bg-green-200'">
+                Seo Scoring
+            </button>
+        </div>
+
+        <div class="space-y-2">
+            <button @click="toolStore.setActiveTool('SpecSheetHosting')"
+                class="w-full px-3 py-2 rounded text-left transition-colors"
+                :class="toolStore.activeTool === 'SpecSheetHosting' ? 'bg-green-500 text-white' : 'hover:bg-green-200'">
+                Spec Sheet
             </button>
         </div>
     </div>
@@ -16,7 +24,7 @@ import { useToolStore, type Tool } from '@/stores/tool.store'
 
 const toolStore = useToolStore()
 
-const tools = ['seoScore', 'specSheetHosting']
+const tools = ['SeoScore', 'SpecSheetHosting']
 
 
 </script>

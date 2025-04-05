@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-purple-300">Editor</div>
+    <div class="h-full bg-purple-300">Editor</div>
 </template>
 
 <script setup lang="ts">

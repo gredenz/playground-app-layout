@@ -2,19 +2,19 @@
 import { defineStore } from 'pinia'
 import { ref, shallowRef, markRaw, computed } from 'vue'
 
-export type Tool = 'seoScore' | 'specSheetHosting' // Add more tools
-export type MainComponentTool = 'editor' | 'specSheet' // Add more main components
+export type Tool = 'SeoScore' | 'SpecSheetHosting' // Add more tools
+export type MainComponentTool = 'Editor' | 'SpecSheet' // Add more main components
 
 // Tool to MainComponentTool mapping
 const toolToMainComponentMap: Record<Tool, MainComponentTool> = {
-  seoScore: 'editor',
-  specSheetHosting: 'specSheet',
+  SeoScore: 'Editor',
+  SpecSheetHosting: 'SpecSheet',
   // Add more mappings as needed
 }
 
 export const useToolStore = defineStore('tool', () => {
   // State
-  const activeTool = ref<Tool>('seoScore')
+  const activeTool = ref<Tool>('SeoScore')
   const activeMainComponentTool = computed<MainComponentTool>(() => {
     return toolToMainComponentMap[activeTool.value]
   })
@@ -31,15 +31,13 @@ export const useToolStore = defineStore('tool', () => {
 
     try {
       // 1. Load the specific tool component
-      const toolComponentName = tool.charAt(0).toUpperCase() + tool.slice(1)
-      const toolComponent = await import(`@/components/tools/${toolComponentName}.vue`)
+      const toolComponent = await import(`@/components/tools/${tool}.vue`)
       activeToolComponent.value = markRaw(toolComponent.default)
 
       // 2. Load the corresponding main component
       const mainComponent = toolToMainComponentMap[tool]
-      const mainComponentName = mainComponent.charAt(0).toUpperCase() + mainComponent.slice(1)
       const mainComponentModule = await import(
-        `@/components/mainComponentTools/${mainComponentName}.vue`
+        `@/components/mainComponentTools/${mainComponent}.vue`
       )
       activeMainComponent.value = markRaw(mainComponentModule.default)
     } catch (error) {
@@ -52,7 +50,7 @@ export const useToolStore = defineStore('tool', () => {
   }
 
   // Initialize with default tool immediately
-  setActiveTool('seoScore')
+  setActiveTool('SeoScore')
 
   return {
     // State
