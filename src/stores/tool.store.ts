@@ -1,57 +1,68 @@
 // stores/tool.store.ts
 import { defineStore } from 'pinia'
-import { ref, shallowRef, markRaw } from 'vue'
+import { ref, shallowRef, markRaw, computed } from 'vue'
 
-// Import components directly
-// This is an alternative approach that may help with dynamic imports
-// We'll keep the dynamic import for SpecSheetIntelligence
+export type Tool = 'seoScore' | 'specSheetHosting' // Add more tools
+export type MainComponentTool = 'editor' | 'specSheet' // Add more main components
 
-export type Tool = 'editor' | 'specSheet'
+// Tool to MainComponentTool mapping
+const toolToMainComponentMap: Record<Tool, MainComponentTool> = {
+  seoScore: 'editor',
+  specSheetHosting: 'specSheet',
+  // Add more mappings as needed
+}
 
 export const useToolStore = defineStore('tool', () => {
   // State
-  const activeTool = ref<Tool>('editor')
+  const activeTool = ref<Tool>('seoScore')
+  const activeMainComponentTool = computed<MainComponentTool>(() => {
+    return toolToMainComponentMap[activeTool.value]
+  })
+
+  // Component references
   const activeToolComponent = shallowRef<any>(null)
-  const isLoading = ref(true) // Start with loading true
+  const activeMainComponent = shallowRef<any>(null)
+  const isLoading = ref(true)
 
   // Actions
   const setActiveTool = async (tool: Tool) => {
-    console.log(`Setting active tool to: ${tool}`)
     isLoading.value = true
     activeTool.value = tool
 
     try {
-      let component: any
+      // 1. Load the specific tool component
+      const toolComponentName = tool.charAt(0).toUpperCase() + tool.slice(1)
+      const toolComponent = await import(`@/components/tools/${toolComponentName}.vue`)
+      activeToolComponent.value = markRaw(toolComponent.default)
 
-      // Use static import for editor (guaranteed to work)
-
-      // Dynamic import for other components
-      console.log(`Dynamically importing: ${tool}`)
-      component = await import(
-        `../components/mainComponentTools/${tool.charAt(0).toUpperCase() + tool.slice(1)}.vue`
+      // 2. Load the corresponding main component
+      const mainComponent = toolToMainComponentMap[tool]
+      const mainComponentName = mainComponent.charAt(0).toUpperCase() + mainComponent.slice(1)
+      const mainComponentModule = await import(
+        `@/components/mainComponentTools/${mainComponentName}.vue`
       )
-
-      console.log('Component loaded:', component)
-      console.log('Default export:', component.default)
-
-      // Use markRaw to ensure Vue doesn't try to make the component reactive
-      activeToolComponent.value = markRaw(component.default)
-      console.log('Component set to:', activeToolComponent.value)
+      activeMainComponent.value = markRaw(mainComponentModule.default)
     } catch (error) {
-      console.error(`Failed to load tool: ${tool}`, error)
+      console.error('Failed to load components:', error)
       activeToolComponent.value = null
+      activeMainComponent.value = null
     } finally {
       isLoading.value = false
     }
   }
 
   // Initialize with default tool immediately
-  console.log('Initializing store with default tool')
-  setActiveTool('editor')
+  setActiveTool('seoScore')
 
   return {
+    // State
     activeTool,
+    activeMainComponentTool,
+
+    // Component instances
     activeToolComponent,
+    activeMainComponent,
+
     isLoading,
     setActiveTool,
   }

@@ -16,7 +16,7 @@ import { useToolStore, type Tool } from '@/stores/tool.store'
 
 const toolStore = useToolStore()
 
-const tools = ['editor', 'specSheet']
+const tools = ['seoScore', 'specSheetHosting']
 
 
 </script>
