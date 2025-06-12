@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useToolStore } from '@/stores/tool.store'
-
 const toolStore = useToolStore()
 </script>
 
