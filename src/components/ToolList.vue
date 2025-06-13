@@ -16,6 +16,14 @@
                 Spec Sheet
             </button>
         </div>
+
+        <div class="space-y-2">
+            <button @click="toolStore.setActiveTool('NewTool')"
+                class="w-full px-3 py-2 rounded text-left transition-colors"
+                :class="toolStore.activeTool === 'NewTool' ? 'bg-violet-500 text-white' : 'hover:bg-violet-200'">
+               New Tool
+            </button>
+        </div>
     </div>
 </template>
 
@@ -24,7 +32,7 @@ import { useToolStore, type Tool } from '@/stores/tool.store'
 
 const toolStore = useToolStore()
 
-const tools = ['SeoScore', 'SpecSheetHosting']
+const tools = ['SeoScore', 'SpecSheetHosting', 'NewTool']
 
 
 </script>
