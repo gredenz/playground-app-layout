@@ -1,30 +1,40 @@
-import { shallowRef, type ShallowRef } from 'vue'
+import { shallowRef, ref, type ShallowRef, type Ref } from 'vue'
+import type { ToolPlugin, ToolRegistryInterface } from './types'
 
-// Minimal registry - just enough to prove the concept
-export class ToolRegistry {
-  private tools = new Map<string, any>() // We'll type this properly later
-  private activeTool: ShallowRef<any | null> = shallowRef(null)
+export class ToolRegistry implements ToolRegistryInterface {
+  private tools = new Map<string, ToolPlugin>()
+  private activeTool: ShallowRef<ToolPlugin | null> = shallowRef(null)
+  // Make tools list reactive so computed properties update
+  private toolsList: Ref<ToolPlugin[]> = ref([])
   
-  register(tool: any) {
+  register(tool: ToolPlugin): void {
     if (this.tools.has(tool.id)) {
       console.warn(`Tool ${tool.id} already registered`)
       return
     }
     
     this.tools.set(tool.id, tool)
+    this.toolsList.value = Array.from(this.tools.values()) // Update reactive list
     console.log(`Registered tool: ${tool.name}`)
   }
   
-  async activate(toolId: string) {
+  unregister(toolId: string): void {
+    const tool = this.tools.get(toolId)
+    if (tool && this.activeTool.value?.id === toolId) {
+      this.deactivate()
+    }
+    this.tools.delete(toolId)
+    this.toolsList.value = Array.from(this.tools.values()) // Update reactive list
+  }
+  
+  async activate(toolId: string): Promise<ToolPlugin> {
     const tool = this.tools.get(toolId)
     if (!tool) {
       throw new Error(`Tool ${toolId} not found`)
     }
     
     // Deactivate current tool
-    if (this.activeTool.value) {
-      await this.activeTool.value.onDeactivate?.()
-    }
+    await this.deactivate()
     
     // Activate new tool
     await tool.onActivate?.()
@@ -33,18 +43,23 @@ export class ToolRegistry {
     return tool
   }
   
-  getActiveTool() {
+  async deactivate(): Promise<void> {
+    if (this.activeTool.value) {
+      await this.activeTool.value.onDeactivate?.()
+      this.activeTool.value = null
+    }
+  }
+  
+  getActiveTool(): ToolPlugin | null {
     return this.activeTool.value
   }
   
-  getAllTools() {
-    return Array.from(this.tools.values())
+  getAllTools(): ToolPlugin[] {
+    return this.toolsList.value // Return the reactive array
   }
   
-  // Get layout configuration for active tool
-  getActiveLayout(mode: string) {
-    if (!this.activeTool.value) return null
-    return this.activeTool.value.layouts[mode]
+  getToolById(id: string): ToolPlugin | undefined {
+    return this.tools.get(id)
   }
 }
 

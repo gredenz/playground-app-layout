@@ -90,7 +90,7 @@ const layoutModes = ['3col', '2col', 'focused'] as const
 const isLayoutSupported = (mode: string) => {
   const tool = appStore.activeTool
   if (!tool) return false
-  return !!tool.layouts[mode]
+  return !!tool.layouts[mode as keyof typeof tool.layouts]
 }
 
 onMounted(async () => {

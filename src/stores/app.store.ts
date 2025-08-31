@@ -52,17 +52,24 @@ export const useAppStore = defineStore('app', () => {
   }
   
   async function loadLayoutComponents(tool: any, mode: string) {
+    console.log('loadLayoutComponents called with:', { toolName: tool.name, mode })
     const layout = tool.layouts[mode]
-    if (!layout) return
+    if (!layout) {
+      console.error('No layout found for mode:', mode)
+      return
+    }
     
+    console.log('Layout slots:', layout.slots)
     const components: any = {}
     
     // Load all components in parallel
     const loaders = Object.entries(layout.slots).map(async ([slot, loader]) => {
       if (loader && typeof loader === 'function') {
         try {
+          console.log(`Loading ${slot}...`)
           const module = await (loader as any)()
           components[slot] = module.default
+          console.log(`Loaded ${slot}:`, module.default)
         } catch (error) {
           console.error(`Failed to load ${slot} component:`, error)
         }
@@ -70,6 +77,7 @@ export const useAppStore = defineStore('app', () => {
     })
     
     await Promise.all(loaders)
+    console.log('Final components:', components)
     activeComponents.value = components
   }
   

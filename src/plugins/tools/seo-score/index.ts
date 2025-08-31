@@ -1,14 +1,13 @@
-import { markRaw, type Component } from 'vue'
-import type { LayoutMode } from './types'
+import { BaseTool } from '@/core/BaseTool'
+import type { LayoutMode, ToolLayout } from '@/core/types'
 
-// First attempt at a self-registering tool plugin
-export class SeoScoreTool {
+export class SeoScoreTool extends BaseTool {
   readonly id = 'seo-score'
   readonly name = 'SEO Score Analyzer'
   readonly description = 'Analyze and improve your SEO'
   
   // Tool declares what layouts it supports and how to configure them
-  readonly layouts = {
+  readonly layouts: Partial<Record<LayoutMode, ToolLayout>> = {
     '3col': {
       slots: {
         main: () => import('@/components/mainComponents/Editor.vue'),
@@ -29,7 +28,7 @@ export class SeoScoreTool {
     }
   }
   
-  defaultLayout: LayoutMode = '3col'
+  readonly defaultLayout: LayoutMode = '3col'
   
   // Tool manages its own state
   private state = {
@@ -38,10 +37,13 @@ export class SeoScoreTool {
     isAnalyzing: false
   }
   
-  // Lifecycle hooks
+  // Override lifecycle hooks if needed
   async onActivate() {
     console.log(`Tool ${this.name} activated`)
+    console.log('Tool layouts:', this.layouts)
+    console.log('Default layout:', this.defaultLayout)
     // Could load saved state, fetch initial data, etc.
+    this.validateLayouts() // Use base class helper
   }
   
   async onDeactivate() {
