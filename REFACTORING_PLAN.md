@@ -159,5 +159,6 @@ src/
 ## Notes
 - Start small, iterate frequently
 - Each phase should be independently testable
-- Maintain backward compatibility during migration
+- Do not be concerned with making sure the old code works. We are forging ahead on a new path. Once we've refactored the
+  - old piece in our new architecture cleanup and remove the old one
 - Get feedback after each phase before proceeding

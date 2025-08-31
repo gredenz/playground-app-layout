@@ -1,7 +1,7 @@
 <template>
   <div class="h-screen w-screen">
     <!-- 3 Column Layout -->
-    <div v-if="appStore.currentLayoutMode === '3col'" class="flex h-full">
+    <div v-if="appStore.currentLayoutMode === '3col'" class="flex h-full" data-testid="main-panel">
       <div class="flex-1 bg-gray-100">
         <component :is="appStore.activeComponents.main" v-if="appStore.activeComponents.main" />
         <div v-else class="p-4">Loading main...</div>
@@ -41,6 +41,7 @@
         <div>
           <label class="text-xs font-semibold text-gray-600">Active Tool:</label>
           <select 
+            data-testid="tool-selector"
             @change="(e) => appStore.switchTool((e.target as HTMLSelectElement).value)"
             class="ml-2 text-sm border rounded px-2 py-1"
             :value="appStore.activeTool?.id"
@@ -54,7 +55,7 @@
         <!-- Layout Mode Selector -->
         <div>
           <label class="text-xs font-semibold text-gray-600">Layout:</label>
-          <div class="flex gap-1 mt-1">
+          <div class="flex gap-1 mt-1" data-testid="layout-toggle">
             <button
               v-for="mode in layoutModes"
               :key="mode"
