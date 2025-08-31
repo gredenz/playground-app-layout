@@ -3,5 +3,6 @@
 </template>
 
 <script setup lang="ts">
-import LayoutManager from '@/LayoutManager.vue'
+// Using new layout manager from core
+import LayoutManager from '@/core/LayoutManager.vue'
 </script>
