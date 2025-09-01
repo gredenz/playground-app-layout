@@ -1,4 +1,43 @@
 <template>
+  <!-- Teleport debug tool actions to the AppBar -->
+  <Teleport :to="getTeleportSelector('APP_BAR_ACTIONS')">
+    <div class="flex items-center space-x-2">
+      <span class="text-xs text-gray-300">Debug:</span>
+      <button
+        @click="toggleDebugMode"
+        :class="[
+          'px-2 py-1 text-xs rounded border transition-colors',
+          debugMode 
+            ? 'bg-green-600 text-white border-green-500' 
+            : 'bg-gray-700 text-gray-300 border-gray-600 hover:bg-gray-600'
+        ]"
+      >
+        {{ debugMode ? 'ON' : 'OFF' }}
+      </button>
+      <button
+        @click="clearCache"
+        class="px-2 py-1 text-xs rounded bg-red-600 text-white hover:bg-red-700 transition-colors"
+      >
+        Clear Cache
+      </button>
+    </div>
+  </Teleport>
+
+  <!-- Teleport debug settings to the AppBar -->
+  <Teleport :to="getTeleportSelector('APP_BAR_SETTINGS')">
+    <div class="flex items-center space-x-2">
+      <select 
+        v-model="selectedLogLevel"
+        class="bg-gray-800 text-white px-2 py-1 text-xs rounded border border-gray-700 focus:border-blue-400 focus:outline-none"
+      >
+        <option value="error">Error</option>
+        <option value="warn">Warn</option>
+        <option value="info">Info</option>
+        <option value="debug">Debug</option>
+      </select>
+    </div>
+  </Teleport>
+
   <div class="p-6 h-full bg-green-50">
     <h1 class="text-2xl font-bold text-green-800 mb-4">Debug Tool - Main Panel</h1>
     <div class="space-y-4">
@@ -184,11 +223,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useAppStore } from '@/stores/app.store'
 import { useBanner } from '@/composables/useBanner'
 import { useToast } from '@/composables/useToast'
 import { bannerHelpers } from '@/utils/bannerHelpers'
+import { getTeleportSelector } from '@/constants/teleportTargets'
+
+// AppBar injection state
+const debugMode = ref(false)
+const selectedLogLevel = ref('info')
 
 const appStore = useAppStore()
 const { activeBanner } = useBanner()
@@ -273,6 +317,24 @@ const showCustomBanner = () => {
     autoHide: false
   }
 }
+
+// AppBar injection functions
+const toggleDebugMode = () => {
+  debugMode.value = !debugMode.value
+  console.log(`Debug mode ${debugMode.value ? 'enabled' : 'disabled'}`)
+}
+
+const clearCache = () => {
+  localStorage.clear()
+  sessionStorage.clear()
+  console.log('Cache cleared')
+  success('Cache Cleared', 'All cached data has been removed')
+}
+
+// Watch log level changes
+watch(selectedLogLevel, (newLevel) => {
+  console.log(`Log level changed to: ${newLevel}`)
+})
 
 // Toast testing functions
 const showSuccessToast = () => {

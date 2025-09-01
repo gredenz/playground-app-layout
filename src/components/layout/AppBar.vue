@@ -25,10 +25,16 @@
               About
             </RouterLink>
           </nav>
+
+          <!-- Teleport target for tool-specific left navigation -->
+          <div :id="TELEPORT_TARGETS.APP_BAR_LEFT" class="flex items-center space-x-4"></div>
         </div>
 
         <!-- Right section: User/Settings -->
         <div class="flex items-center space-x-4">
+          <!-- Teleport target for tool-specific actions (before tool selector) -->
+          <div :id="TELEPORT_TARGETS.APP_BAR_ACTIONS" class="flex items-center space-x-4"></div>
+
           <!-- Tool selector (if we have tools) -->
           <div v-if="availableTools.length > 0" class="flex items-center space-x-2">
             <label class="text-sm text-gray-300">Tool:</label>
@@ -48,6 +54,9 @@
             </select>
           </div>
 
+          <!-- Teleport target for tool-specific settings -->
+          <div :id="TELEPORT_TARGETS.APP_BAR_SETTINGS" class="flex items-center space-x-4"></div>
+
           <!-- User menu placeholder -->
           <div class="flex items-center">
             <button class="p-2 rounded-full hover:bg-gray-800 transition-colors">
@@ -66,6 +75,7 @@
 import { RouterLink } from 'vue-router'
 import { useAppStore } from '@/stores/app.store'
 import { computed } from 'vue'
+import { TELEPORT_TARGETS } from '@/constants/teleportTargets'
 
 const appStore = useAppStore()
 
@@ -77,7 +87,17 @@ const onToolChange = async (event: Event) => {
   const toolId = target.value
   
   if (toolId) {
-    await appStore.switchTool(toolId)
+    try {
+      await appStore.switchTool(toolId)
+    } catch (error) {
+      console.error('Failed to switch tool:', error)
+      // Reset selector to previous value
+      if (activeTool.value) {
+        target.value = activeTool.value.id
+      } else {
+        target.value = ''
+      }
+    }
   }
 }
 </script>

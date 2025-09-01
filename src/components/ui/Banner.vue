@@ -21,6 +21,10 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import type { BannerProps } from '@/types/banner'
 
+defineOptions({
+  name: 'UiBanner'
+})
+
 const props = withDefaults(defineProps<BannerProps>(), {
   closable: true,
   life: 0
