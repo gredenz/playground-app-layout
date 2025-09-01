@@ -221,7 +221,7 @@ const appState = computed(() => JSON.stringify({
   layoutMode: appStore.currentLayoutMode,
   isLoading: appStore.isLoading,
   toolsCount: appStore.availableTools.length,
-  activeBanner: activeBanner.value?.type || null
+  activeBanner: activeBanner.value?.severity || null
 }, null, 2))
 
 // Banner testing functions
@@ -264,12 +264,11 @@ const hideBanner = () => {
 // Custom banner function
 const showCustomBanner = () => {
   const bannerConfig = {
-    type: customBanner.value.type,
+    severity: customBanner.value.type as 'info' | 'warn' | 'error' | 'success' | 'secondary' | 'contrast',
     title: customBanner.value.title,
     message: customBanner.value.message || undefined,
-    dismissible: customBanner.value.dismissible,
-    autoHide: customBanner.value.autoHide,
-    autoHideDelay: customBanner.value.autoHide ? 5000 : undefined,
+    closable: customBanner.value.dismissible,
+    life: customBanner.value.autoHide ? 5000 : undefined,
     persistent: customBanner.value.persistent
   }
   

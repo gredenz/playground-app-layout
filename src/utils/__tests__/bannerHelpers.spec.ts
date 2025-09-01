@@ -25,10 +25,10 @@ describe('bannerHelpers', () => {
       bannerHelpers.showMaintenance()
 
       expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
-        type: 'maintenance',
+        severity: 'secondary',
         title: 'Scheduled Maintenance',
         message: 'System maintenance is scheduled for tonight at 2:00 AM EST. Some features may be temporarily unavailable.',
-        dismissible: true,
+        closable: true,
         persistent: true
       })
     })
@@ -38,10 +38,10 @@ describe('bannerHelpers', () => {
       bannerHelpers.showMaintenance(customMessage)
 
       expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
-        type: 'maintenance',
+        severity: 'secondary',
         title: 'Scheduled Maintenance',
         message: customMessage,
-        dismissible: true,
+        closable: true,
         persistent: true
       })
     })
@@ -52,12 +52,11 @@ describe('bannerHelpers', () => {
       bannerHelpers.showSuccess('Operation Complete', 'Your action was successful')
 
       expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
-        type: 'success',
+        severity: 'success',
         title: 'Operation Complete',
         message: 'Your action was successful',
-        dismissible: true,
-        autoHide: true,
-        autoHideDelay: 4000
+        closable: true,
+        life: 4000
       })
     })
 
@@ -65,12 +64,11 @@ describe('bannerHelpers', () => {
       bannerHelpers.showSuccess('Success!')
 
       expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
-        type: 'success',
+        severity: 'success',
         title: 'Success!',
         message: undefined,
-        dismissible: true,
-        autoHide: true,
-        autoHideDelay: 4000
+        closable: true,
+        life: 4000
       })
     })
   })
@@ -80,10 +78,10 @@ describe('bannerHelpers', () => {
       bannerHelpers.showError('Error Occurred', 'Something went wrong')
 
       expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
-        type: 'error',
+        severity: 'error',
         title: 'Error Occurred',
         message: 'Something went wrong',
-        dismissible: true,
+        closable: true,
         persistent: false
       })
     })
@@ -92,10 +90,10 @@ describe('bannerHelpers', () => {
       bannerHelpers.showError('Critical Error')
 
       expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
-        type: 'error',
+        severity: 'error',
         title: 'Critical Error',
         message: undefined,
-        dismissible: true,
+        closable: true,
         persistent: false
       })
     })
@@ -106,10 +104,10 @@ describe('bannerHelpers', () => {
       bannerHelpers.showWarning('Warning Title', 'Warning message')
 
       expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
-        type: 'warning',
+        severity: 'warn',
         title: 'Warning Title',
         message: 'Warning message',
-        dismissible: true
+        closable: true
       })
     })
   })
@@ -119,12 +117,11 @@ describe('bannerHelpers', () => {
       bannerHelpers.showInfo('Information', 'Some helpful info')
 
       expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
-        type: 'info',
+        severity: 'info',
         title: 'Information',
         message: 'Some helpful info',
-        dismissible: true,
-        autoHide: true,
-        autoHideDelay: 6000
+        closable: true,
+        life: 6000
       })
     })
   })
@@ -132,12 +129,11 @@ describe('bannerHelpers', () => {
   describe('showCustom', () => {
     it('should show custom banner with provided configuration', () => {
       const customBanner = {
-        type: 'warning' as const,
+        severity: 'warn' as const,
         title: 'Custom Banner',
         message: 'Custom message',
-        dismissible: false,
-        autoHide: true,
-        autoHideDelay: 2000,
+        closable: false,
+        life: 2000,
         persistent: true
       }
 

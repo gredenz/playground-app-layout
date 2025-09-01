@@ -1,14 +1,14 @@
-export type BannerType = 'info' | 'warning' | 'error' | 'success' | 'maintenance'
+export type BannerSeverity = 'info' | 'warn' | 'error' | 'success' | 'secondary' | 'contrast'
 
 export interface BannerNotification {
   id: string
-  type: BannerType
-  title: string
+  severity: BannerSeverity
+  title?: string
   message?: string
-  dismissible?: boolean
-  autoHide?: boolean
-  autoHideDelay?: number
+  closable?: boolean
+  life?: number
   persistent?: boolean // Survives page refresh
+  icon?: string
 }
 
 export type BannerProps = Omit<BannerNotification, 'id' | 'persistent'>

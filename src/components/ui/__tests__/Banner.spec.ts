@@ -1,10 +1,29 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { nextTick, createApp } from 'vue'
 import Banner from '../Banner.vue'
+import Message from 'primevue/message'
+import PrimeVue from 'primevue/config'
 
 // Mock timers for testing auto-hide functionality
 vi.useFakeTimers()
+
+// Create test helper to mount components with PrimeVue
+const createWrapper = (props: any, options: any = {}) => {
+  return mount(Banner, {
+    props,
+    global: {
+      plugins: [
+        [PrimeVue, { theme: 'none' }]
+      ],
+      components: {
+        Message
+      },
+      ...options.global
+    },
+    ...options
+  })
+}
 
 describe('Banner.vue', () => {
   beforeEach(() => {
@@ -17,292 +36,204 @@ describe('Banner.vue', () => {
 
   describe('Rendering', () => {
     it('should render with basic props', () => {
-      const wrapper = mount(Banner, {
-        props: {
-          type: 'info',
-          title: 'Test Banner'
-        }
+      const wrapper = createWrapper({
+        severity: 'info',
+        title: 'Test Banner'
       })
 
-      expect(wrapper.find('.banner').exists()).toBe(true)
+      expect(wrapper.findComponent(Message).exists()).toBe(true)
       expect(wrapper.text()).toContain('Test Banner')
     })
 
-    it('should render message when provided', () => {
-      const wrapper = mount(Banner, {
-        props: {
-          type: 'info',
-          title: 'Test Banner',
-          message: 'This is a test message'
-        }
+    it('should render with title and message', () => {
+      const wrapper = createWrapper({
+        severity: 'success',
+        title: 'Success!',
+        message: 'Operation completed successfully'
       })
 
-      expect(wrapper.text()).toContain('Test Banner')
-      expect(wrapper.text()).toContain('This is a test message')
+      expect(wrapper.text()).toContain('Success!')
+      expect(wrapper.text()).toContain('Operation completed successfully')
     })
 
-    it('should apply correct CSS classes for each banner type', () => {
-      const types = ['info', 'warning', 'error', 'success', 'maintenance'] as const
-      const expectedClasses = {
-        info: 'bg-blue-50 border-blue-400 text-blue-800',
-        warning: 'bg-yellow-50 border-yellow-400 text-yellow-800',
-        error: 'bg-red-50 border-red-400 text-red-800',
-        success: 'bg-green-50 border-green-400 text-green-800',
-        maintenance: 'bg-purple-50 border-purple-400 text-purple-800'
-      }
-
-      types.forEach(type => {
-        const wrapper = mount(Banner, {
-          props: {
-            type,
-            title: `${type} banner`
-          }
-        })
-
-        const banner = wrapper.find('.banner')
-        expect(banner.classes()).toContain(expectedClasses[type].split(' ')[0]) // Check first class
-      })
-    })
-
-    it('should have correct ARIA role', () => {
+    it('should pass correct props to PrimeVue Message', () => {
       const wrapper = mount(Banner, {
         props: {
-          type: 'info',
-          title: 'Test Banner'
-        }
+          severity: 'error',
+          title: 'Error',
+          closable: true,
+          life: 3000
       })
 
-      expect(wrapper.find('[role="alert"]').exists()).toBe(true)
+      const messageComponent = wrapper.findComponent(Message)
+      expect(messageComponent.props('severity')).toBe('error')
+      expect(messageComponent.props('closable')).toBe(true)
+      expect(messageComponent.props('life')).toBe(3000)
+    })
+
+    it('should render with custom icon', () => {
+      const wrapper = mount(Banner, {
+        props: {
+          severity: 'warn',
+          title: 'Warning',
+          icon: 'pi pi-exclamation-triangle'
+      })
+
+      const messageComponent = wrapper.findComponent(Message)
+      expect(messageComponent.props('icon')).toBe('pi pi-exclamation-triangle')
+    })
+
+    it('should render slot content when no title or message provided', () => {
+      const wrapper = mount(Banner, {
+        props: {
+          severity: 'info'
+        },
+        slots: {
+          default: '<span>Custom slot content</span>'
+      })
+
+      expect(wrapper.text()).toContain('Custom slot content')
     })
   })
 
-  describe('Dismissible functionality', () => {
-    it('should show dismiss button when dismissible is true (default)', () => {
+  describe('Dismissal', () => {
+    it('should emit dismiss event when Message emits close', async () => {
       const wrapper = mount(Banner, {
         props: {
-          type: 'info',
-          title: 'Test Banner'
-        }
+          severity: 'info',
+          title: 'Test',
+          closable: true
       })
 
-      expect(wrapper.find('button').exists()).toBe(true)
+      const messageComponent = wrapper.findComponent(Message)
+      await messageComponent.vm.$emit('close')
+
+      expect(wrapper.emitted('dismiss')).toBeTruthy()
     })
 
-    it('should hide dismiss button when dismissible is false', () => {
+    it('should emit dismiss event when Message emits life-end', async () => {
       const wrapper = mount(Banner, {
         props: {
-          type: 'info',
-          title: 'Test Banner',
-          dismissible: false
-        }
+          severity: 'info',
+          title: 'Test',
+          life: 1000
       })
 
-      expect(wrapper.find('button').exists()).toBe(false)
+      const messageComponent = wrapper.findComponent(Message)
+      await messageComponent.vm.$emit('life-end')
+
+      expect(wrapper.emitted('dismiss')).toBeTruthy()
     })
 
-    it('should emit dismiss event when dismiss button is clicked', async () => {
+    it('should hide banner when dismissed', async () => {
       const wrapper = mount(Banner, {
         props: {
-          type: 'info',
-          title: 'Test Banner'
-        }
+          severity: 'info',
+          title: 'Test'
       })
 
-      await wrapper.find('button').trigger('click')
+      expect(wrapper.findComponent(Message).exists()).toBe(true)
 
-      expect(wrapper.emitted()).toHaveProperty('dismiss')
-      expect(wrapper.emitted('dismiss')).toHaveLength(1)
-    })
-
-    it('should become invisible when dismissed', async () => {
-      const wrapper = mount(Banner, {
-        props: {
-          type: 'info',
-          title: 'Test Banner'
-        }
-      })
-
-      expect(wrapper.find('.banner').exists()).toBe(true)
-
-      await wrapper.find('button').trigger('click')
+      // Trigger dismiss
+      const messageComponent = wrapper.findComponent(Message)
+      await messageComponent.vm.$emit('close')
       await nextTick()
 
-      expect(wrapper.find('.banner').exists()).toBe(false)
-    })
-
-    it('should have correct aria-label on dismiss button', () => {
-      const wrapper = mount(Banner, {
-        props: {
-          type: 'warning',
-          title: 'Test Banner'
-        }
-      })
-
-      const dismissButton = wrapper.find('button')
-      expect(dismissButton.attributes('aria-label')).toBe('Dismiss warning notification')
+      // Banner should be hidden (isVisible = false)
+      expect(wrapper.findComponent(Message).exists()).toBe(false)
     })
   })
 
   describe('Auto-hide functionality', () => {
-    it('should not auto-hide when autoHide is false (default)', async () => {
+    it('should auto-hide after specified life duration', async () => {
       const wrapper = mount(Banner, {
         props: {
-          type: 'info',
-          title: 'Test Banner'
-        }
+          severity: 'info',
+          title: 'Auto-hide test',
+          life: 1000
       })
+
+      expect(wrapper.findComponent(Message).exists()).toBe(true)
 
       // Fast-forward time
-      vi.advanceTimersByTime(10000)
+      vi.advanceTimersByTime(1000)
       await nextTick()
 
-      expect(wrapper.find('.banner').exists()).toBe(true)
-      expect(wrapper.emitted('dismiss')).toBeUndefined()
+      expect(wrapper.emitted('dismiss')).toBeTruthy()
     })
 
-    it('should auto-hide after specified delay when autoHide is true', async () => {
+    it('should clear timeout on manual dismiss', async () => {
       const wrapper = mount(Banner, {
         props: {
-          type: 'info',
-          title: 'Test Banner',
-          autoHide: true,
-          autoHideDelay: 3000
-        }
+          severity: 'info',
+          title: 'Test',
+          life: 5000
       })
 
-      expect(wrapper.find('.banner').exists()).toBe(true)
+      // Manually dismiss before timeout
+      const messageComponent = wrapper.findComponent(Message)
+      await messageComponent.vm.$emit('close')
 
-      // Fast-forward time to just before auto-hide
-      vi.advanceTimersByTime(2999)
-      await nextTick()
-      expect(wrapper.find('.banner').exists()).toBe(true)
-
-      // Fast-forward to trigger auto-hide
-      vi.advanceTimersByTime(1)
+      // Fast-forward time beyond original timeout
+      vi.advanceTimersByTime(6000)
       await nextTick()
 
-      expect(wrapper.find('.banner').exists()).toBe(false)
+      // Should only emit dismiss once (for manual dismiss, not timeout)
       expect(wrapper.emitted('dismiss')).toHaveLength(1)
     })
 
-    it('should use default autoHideDelay when not specified', async () => {
-      const wrapper = mount(Banner, {
-        props: {
-          type: 'info',
-          title: 'Test Banner',
-          autoHide: true
-        }
+    it('should not set timeout when life is 0', () => {
+      const setTimeoutSpy = vi.spyOn(global, 'setTimeout')
+
+      createWrapper({
+          severity: 'info',
+          title: 'Test',
+          life: 0
       })
 
-      // Fast-forward to default delay (5000ms)
-      vi.advanceTimersByTime(5000)
-      await nextTick()
-
-      expect(wrapper.find('.banner').exists()).toBe(false)
-      expect(wrapper.emitted('dismiss')).toHaveLength(1)
+      expect(setTimeoutSpy).not.toHaveBeenCalled()
     })
 
-    it('should clear timeout when manually dismissed before auto-hide', async () => {
-      const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout')
-      
-      const wrapper = mount(Banner, {
-        props: {
-          type: 'info',
-          title: 'Test Banner',
-          autoHide: true,
-          autoHideDelay: 5000
-        }
+    it('should not set timeout when life is not provided', () => {
+      const setTimeoutSpy = vi.spyOn(global, 'setTimeout')
+
+      createWrapper({
+          severity: 'info',
+          title: 'Test'
       })
 
-      // Manually dismiss before auto-hide
-      await wrapper.find('button').trigger('click')
-
-      expect(clearTimeoutSpy).toHaveBeenCalled()
-      expect(wrapper.find('.banner').exists()).toBe(false)
-
-      clearTimeoutSpy.mockRestore()
+      expect(setTimeoutSpy).not.toHaveBeenCalled()
     })
+  })
 
-    it('should clear timeout on unmount to prevent memory leaks', () => {
+  describe('Cleanup', () => {
+    it('should clear timeout on component unmount', async () => {
       const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout')
-      
+
       const wrapper = mount(Banner, {
         props: {
-          type: 'info',
-          title: 'Test Banner',
-          autoHide: true,
-          autoHideDelay: 5000
-        }
+          severity: 'info',
+          title: 'Test',
+          life: 5000
       })
 
       wrapper.unmount()
 
       expect(clearTimeoutSpy).toHaveBeenCalled()
-      clearTimeoutSpy.mockRestore()
     })
   })
 
-  describe('Icon rendering', () => {
-    it('should render correct icon for each banner type', () => {
-      const types = ['info', 'warning', 'error', 'success', 'maintenance'] as const
-
-      types.forEach(type => {
-        const wrapper = mount(Banner, {
-          props: {
-            type,
-            title: `${type} banner`
-          }
-        })
-
-        // Should have an SVG icon
-        expect(wrapper.find('svg').exists()).toBe(true)
-      })
-    })
-  })
-
-  describe('Edge cases', () => {
-    it('should handle empty title gracefully', () => {
+  describe('Default props', () => {
+    it('should have correct default values', () => {
       const wrapper = mount(Banner, {
         props: {
-          type: 'info',
-          title: ''
-        }
+          severity: 'info',
+          title: 'Test'
       })
 
-      expect(wrapper.find('.banner').exists()).toBe(true)
-    })
-
-    it('should handle very long titles and messages', () => {
-      const longTitle = 'A'.repeat(200)
-      const longMessage = 'B'.repeat(500)
-      
-      const wrapper = mount(Banner, {
-        props: {
-          type: 'info',
-          title: longTitle,
-          message: longMessage
-        }
-      })
-
-      expect(wrapper.text()).toContain(longTitle)
-      expect(wrapper.text()).toContain(longMessage)
-    })
-
-    it('should handle zero autoHideDelay', async () => {
-      const wrapper = mount(Banner, {
-        props: {
-          type: 'info',
-          title: 'Test Banner',
-          autoHide: true,
-          autoHideDelay: 0
-        }
-      })
-
-      // Should auto-dismiss immediately
-      vi.advanceTimersByTime(0)
-      await nextTick()
-
-      expect(wrapper.find('.banner').exists()).toBe(false)
+      const messageComponent = wrapper.findComponent(Message)
+      expect(messageComponent.props('closable')).toBe(true)
+      expect(messageComponent.props('life')).toBe(0)
     })
   })
 })

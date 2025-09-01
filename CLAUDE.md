@@ -142,3 +142,4 @@ The current architecture provides:
 - **Clean code**: Readable, focused functions with early returns
 - **Type safety**: Comprehensive TypeScript usage throughout
 - write tests before working on implementation
+- Review Primevue component library to ensure we are not recreating the wheel. We should try and use the Adapter Pattern when possible to ensure consistency

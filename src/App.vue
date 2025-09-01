@@ -12,12 +12,12 @@ const { activeBanner, dismissBanner } = useBanner()
     <!-- System-wide banner -->
     <Banner
       v-if="activeBanner"
-      :type="activeBanner.type"
+      :severity="activeBanner.severity"
       :title="activeBanner.title"
       :message="activeBanner.message"
-      :dismissible="activeBanner.dismissible"
-      :auto-hide="activeBanner.autoHide"
-      :auto-hide-delay="activeBanner.autoHideDelay"
+      :closable="activeBanner.closable"
+      :life="activeBanner.life"
+      :icon="activeBanner.icon"
       @dismiss="dismissBanner"
     />
     

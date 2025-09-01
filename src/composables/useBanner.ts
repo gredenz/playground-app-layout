@@ -8,13 +8,13 @@ let isInitialized = false
 
 export function useBanner() {
   function showBanner(banner: Omit<BannerNotification, 'id'>) {
-    const contentHash = `${banner.type}-${banner.title}-${banner.message || ''}`.replace(/\s+/g, '-').toLowerCase()
+    const contentHash = `${banner.severity}-${banner.title || ''}-${banner.message || ''}`.replace(/\s+/g, '-').toLowerCase()
     const bannerWithId: BannerNotification = {
       ...banner,
       id: contentHash
     }
     
-    if (banner.dismissible !== false && dismissedBanners.value.includes(bannerWithId.id)) {
+    if (banner.closable !== false && dismissedBanners.value.includes(bannerWithId.id)) {
       return
     }
     
@@ -24,11 +24,11 @@ export function useBanner() {
       localStorage.setItem('app-banner', JSON.stringify(bannerWithId))
     }
     
-    if (banner.autoHide) {
+    if (banner.life && banner.life > 0) {
       clearAutoHideTimeout()
       autoHideTimeout = setTimeout(() => {
         hideBanner()
-      }, banner.autoHideDelay || 5000)
+      }, banner.life)
     }
   }
 

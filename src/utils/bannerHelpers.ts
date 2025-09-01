@@ -11,10 +11,10 @@ export const bannerHelpers = {
   showMaintenance(message?: string) {
     const { showBanner } = useBanner()
     showBanner({
-      type: 'maintenance',
+      severity: 'secondary',
       title: 'Scheduled Maintenance',
       message: message || 'System maintenance is scheduled for tonight at 2:00 AM EST. Some features may be temporarily unavailable.',
-      dismissible: true,
+      closable: true,
       persistent: true
     })
   },
@@ -25,12 +25,11 @@ export const bannerHelpers = {
   showSuccess(title: string, message?: string) {
     const { showBanner } = useBanner()
     showBanner({
-      type: 'success',
+      severity: 'success',
       title,
       message,
-      dismissible: true,
-      autoHide: true,
-      autoHideDelay: 4000
+      closable: true,
+      life: 4000
     })
   },
 
@@ -40,11 +39,11 @@ export const bannerHelpers = {
   showError(title: string, message?: string) {
     const { showBanner } = useBanner()
     showBanner({
-      type: 'error',
+      severity: 'error',
       title,
       message,
-      dismissible: true,
-      persistent: false // Errors should not persist across sessions
+      closable: true,
+      persistent: false
     })
   },
 
@@ -54,10 +53,10 @@ export const bannerHelpers = {
   showWarning(title: string, message?: string) {
     const { showBanner } = useBanner()
     showBanner({
-      type: 'warning',
+      severity: 'warn',
       title,
       message,
-      dismissible: true
+      closable: true
     })
   },
 
@@ -67,12 +66,11 @@ export const bannerHelpers = {
   showInfo(title: string, message?: string) {
     const { showBanner } = useBanner()
     showBanner({
-      type: 'info',
+      severity: 'info',
       title,
       message,
-      dismissible: true,
-      autoHide: true,
-      autoHideDelay: 6000
+      closable: true,
+      life: 6000
     })
   },
 
