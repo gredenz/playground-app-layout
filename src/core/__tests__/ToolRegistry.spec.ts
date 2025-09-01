@@ -68,8 +68,31 @@ describe('ToolRegistry', () => {
   })
 
   it('should deactivate previous tool when activating new one', async () => {
-    const mockTool2 = new MockTool()
-    mockTool2.id = 'test-tool-2'
+    class MockTool2 implements ToolPlugin {
+      readonly id = 'test-tool-2'
+      readonly name = 'Test Tool 2'
+      readonly description = 'A second test tool'
+      readonly defaultLayout: LayoutMode = '2col'
+      readonly layouts = {
+        '2col': {
+          slots: {
+            main: () => Promise.resolve({ default: {} as any }),
+            right: () => Promise.resolve({ default: {} as any })
+          }
+        }
+      }
+      onActivateCalled = false
+      onDeactivateCalled = false
+
+      async onActivate() {
+        this.onActivateCalled = true
+      }
+
+      async onDeactivate() {
+        this.onDeactivateCalled = true
+      }
+    }
+    const mockTool2 = new MockTool2()
     
     registry.register(mockTool)
     registry.register(mockTool2)

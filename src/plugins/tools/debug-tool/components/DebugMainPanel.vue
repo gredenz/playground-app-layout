@@ -37,7 +37,7 @@ const appState = computed(() => JSON.stringify({
   toolsCount: appStore.availableTools.length
 }, null, 2))
 
-let timeInterval: NodeJS.Timeout
+let timeInterval: ReturnType<typeof setInterval>
 
 onMounted(() => {
   timeInterval = setInterval(() => {
