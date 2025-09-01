@@ -53,8 +53,8 @@ test.describe('Tool Registration and Rendering', () => {
         await page.waitForTimeout(1000)
         
         // Verify tool switched
-        const newValue = await toolSelector.inputValue()
-        expect(newValue).toBe(secondOption)
+        const newValue = toolSelector
+        await expect(newValue).toHaveValue(secondOption)
       }
     }
   })
@@ -90,7 +90,7 @@ test.describe('Tool Registration and Rendering', () => {
     await expect(page.locator('button:has-text("Debug Tool")')).toBeVisible()
     
     // Ensure no loading indicators are present
-    await expect(page.locator('div:has-text("Loading...")')).not.toBeVisible()
+    await expect(page.locator('div:has-text("Loading...")')).toBeHidden()
   })
 
   test('should handle layout mode switching', async ({ page }) => {

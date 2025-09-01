@@ -93,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed } from 'vue'
+import { onMounted } from 'vue'
 import { useAppStore } from '@/stores/app.store'
 import { registerAllTools } from '@/plugins'
 import ErrorBoundary from '@/components/ui/ErrorBoundary.vue'
