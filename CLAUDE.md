@@ -33,43 +33,51 @@ npm run build
 
 ## Architecture Overview
 
-This is a Vue 3 + TypeScript application implementing a dynamic, tool-based layout system. The architecture enables different "tools" (features) to define their own UI layouts and component arrangements.
+This is a Vue 3 + TypeScript application implementing a plugin-based tool system with dynamic layouts. The architecture enables different "tools" (features) to self-register and define their own UI layouts and component arrangements.
 
-### Core Layout System
+### Core Plugin System
 
-The layout system (currently v0) is built around:
+The system is built around:
 
-1. **Tool Store** (`src/stores/tool.store.ts`): Central state management that:
-   - Manages active tool and layout mode
+1. **ToolRegistry** (`src/core/ToolRegistry.ts`): Central registry that:
+   - Manages tool registration and validation
+   - Handles tool activation/deactivation with lifecycle hooks
+   - Provides event listeners for tool changes
+   - Maintains reactive state for active tools
+
+2. **App Store** (`src/stores/app.store.ts`): State management that:
+   - Manages current layout mode and active components
    - Dynamically loads components based on tool configuration
    - Handles layout transitions between tools
-   - Maps component names to lazy-loaded Vue components
+   - Provides computed properties for reactive UI updates
 
-2. **Layout Manager** (`src/LayoutManager.vue`): Orchestrates layout rendering by:
-   - Selecting appropriate layout component (ThreePanelLayout, TwoPanelLayout, FocusedLayout)
-   - Passing dynamically loaded components to layout slots
-   - Providing layout mode switching UI
+3. **Layout Manager** (`src/core/LayoutManager.vue`): Renders layouts by:
+   - Supporting 3-column, 2-column, and focused layout modes
+   - Using dynamic components (`:is`) for flexible rendering
+   - Wrapping all components in ErrorBoundary for fault tolerance
+   - Providing debug controls for tool and layout switching
 
-3. **Layout Modes**: Three distinct arrangements:
-   - `3col`: Main panel, middle panel, right sidebar
-   - `2col`: Main panel, right sidebar
-   - `focused`: Full-width main with optional overlay
+### Layout Modes
 
-### Tool Configuration Structure
+Three distinct layout arrangements:
+- `3col`: Main panel, middle panel, right sidebar
+- `2col`: Main panel, right sidebar  
+- `focused`: Full-width main panel
 
-Each tool in `toolLayoutConfigs` defines:
-- Supported layout modes
-- Default layout mode
-- Component assignments for each layout slot per mode
-- Components can be set to 'hidden' to remove them
+### Tool Plugin Structure
+
+Tools implement the `ToolPlugin` interface and define:
+- Supported layout modes with component slot assignments
+- Default layout mode for initial activation
+- Optional lifecycle hooks for activation/deactivation
+- Components loaded via dynamic imports for code splitting
 
 ### Component Loading Strategy
 
-Components are:
-- Lazy-loaded using dynamic imports
-- Wrapped with `markRaw()` to prevent Vue reactivity overhead
-- Cached using `shallowRef` for performance
-- Loaded in parallel when switching tools/layouts
+- Components are lazy-loaded using dynamic imports for automatic code splitting
+- Loaded in parallel for optimal performance  
+- Wrapped with `shallowRef` to prevent unnecessary Vue reactivity overhead
+- All dynamic components wrapped in ErrorBoundary for fault tolerance
 
 ### Tool Structure and Conventions
 
@@ -116,15 +124,20 @@ src/plugins/tools/
 - **Vitest** for unit testing
 - **Playwright** for E2E testing
 
-### Active Refactoring
+### Key Features
 
-There is an ongoing refactoring plan (`REFACTORING_PLAN.md`) to transform this into a plugin-based architecture with:
-- Tool self-registration
-- Better separation of concerns
-- Type-safe component resolution
-- Proper error boundaries
-- Responsive layout support
+The current architecture provides:
+- ✅ **Plugin-based tool system** with self-registration
+- ✅ **Type-safe component resolution** via TypeScript interfaces
+- ✅ **Error boundaries** for fault-tolerant component rendering
+- ✅ **Dynamic layouts** supporting multiple layout modes
+- ✅ **Tool validation** with comprehensive error checking
+- ✅ **Event-driven architecture** with tool change notifications
+- ✅ **Clean separation of concerns** between registry, state, and UI
 
-When making changes, consider whether they align with the refactoring goals or should be implemented in the current v0 system.
-- Ok lets start with the plan. First thing however I noticed the usage of "I" in front of interface names. I don't like that naming convention. Also I'm a big a big fan of SOLID principals, clean code (without overdoing the creation of small functions), early returns. Also I don't want you to agree with everything. You are my pair programmer, we challenge each other assumptions, we are architects of this system, we think as Sr Software Engineers and architects"
-- I've added a code-reviewer agent you are to use this agent before we commit code and other times along the way to make sure we are writing quality code
+### Development Principles
+
+- **Keep it simple**: Avoid premature optimization and over-engineering
+- **SOLID principles**: Well-structured, maintainable code architecture
+- **Clean code**: Readable, focused functions with early returns
+- **Type safety**: Comprehensive TypeScript usage throughout
