@@ -7,12 +7,7 @@ vi.mock('@/composables/useBanner', () => ({
   useBanner: vi.fn()
 }))
 
-type MockBannerComposable = {
-  showBanner: ReturnType<typeof vi.fn>
-  dismissBanner: ReturnType<typeof vi.fn>
-  hideBanner: ReturnType<typeof vi.fn>
-  activeBanner: { value: unknown }
-}
+type MockBannerComposable = any
 
 describe('bannerHelpers', () => {
   let mockBannerComposable: MockBannerComposable

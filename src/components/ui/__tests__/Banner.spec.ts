@@ -9,7 +9,7 @@ import PrimeVue from 'primevue/config'
 vi.useFakeTimers()
 
 // Helper to create wrapper with PrimeVue setup
-const createWrapper = (props: Record<string, unknown>, options: Record<string, unknown> = {}) => {
+const createWrapper = (props: any, options: any = {}) => {
   return mount(Banner, {
     props,
     global: {
