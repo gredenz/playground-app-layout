@@ -195,11 +195,12 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAppStore } from '@/stores/app.store'
 import { useBanner } from '@/composables/useBanner'
+import { useToast } from '@/composables/useToast'
 import { bannerHelpers } from '@/utils/bannerHelpers'
-import { toastHelpers } from '@/utils/toastHelpers'
 
 const appStore = useAppStore()
 const { activeBanner } = useBanner()
+const { success, info, warn, error, clearAllToasts } = useToast()
 const currentTime = ref(new Date().toLocaleString())
 
 // Custom banner form
@@ -287,35 +288,31 @@ const showCustomBanner = () => {
 
 // Toast testing functions
 const showSuccessToast = () => {
-  toastHelpers.success('Data Saved', 'Your changes have been saved successfully')
+  success('Data Saved', 'Your changes have been saved successfully')
 }
 
 const showInfoToast = () => {
-  toastHelpers.info('New Feature', 'Check out our new toast notification system!')
+  info('New Feature', 'Check out our new toast notification system!')
 }
 
 const showWarningToast = () => {
-  toastHelpers.warn('Browser Warning', 'Please update your browser for the best experience')
+  warn('Browser Warning', 'Please update your browser for the best experience')
 }
 
 const showErrorToast = () => {
-  toastHelpers.error('Server Error', 'Unable to connect to the server. Please try again.')
+  error('Server Error', 'Unable to connect to the server. Please try again.')
 }
 
 const showOperationSuccess = () => {
-  toastHelpers.operationSuccess('File Upload', 'The file was uploaded and processed')
+  success('File Upload Successful', 'The file was uploaded and processed')
 }
 
 const showOperationError = () => {
-  toastHelpers.operationError('Database Query', 'Connection timeout occurred')
+  error('Database Query Failed', 'Connection timeout occurred')
 }
 
 const showNetworkError = () => {
-  toastHelpers.networkError('Connection lost while syncing data')
-}
-
-const clearAllToasts = () => {
-  toastHelpers.clear()
+  error('Network Error', 'Connection lost while syncing data')
 }
 
 let timeInterval: ReturnType<typeof setInterval>

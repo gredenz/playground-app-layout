@@ -1,20 +1,10 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import { inject, onMounted } from 'vue'
 import { useBanner } from '@/composables/useBanner'
-import { setToastService } from '@/utils/toastService'
 import Banner from '@/components/ui/Banner.vue'
 import Toast from 'primevue/toast'
 
 const { activeBanner, dismissBanner } = useBanner()
-
-// Initialize toast service for global access
-onMounted(() => {
-  const toast = inject('$toast')
-  if (toast) {
-    setToastService(toast)
-  }
-})
 </script>
 
 <template>
