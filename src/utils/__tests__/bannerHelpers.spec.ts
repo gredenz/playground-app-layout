@@ -28,8 +28,7 @@ describe('bannerHelpers', () => {
         severity: 'secondary',
         title: 'Scheduled Maintenance',
         message: 'System maintenance is scheduled for tonight at 2:00 AM EST. Some features may be temporarily unavailable.',
-        closable: true,
-        persistent: true
+        closable: true
       })
     })
 
@@ -41,8 +40,7 @@ describe('bannerHelpers', () => {
         severity: 'secondary',
         title: 'Scheduled Maintenance',
         message: customMessage,
-        closable: true,
-        persistent: true
+        closable: true
       })
     })
   })
@@ -74,15 +72,14 @@ describe('bannerHelpers', () => {
   })
 
   describe('showError', () => {
-    it('should show error banner that is not persistent', () => {
+    it('should show error banner', () => {
       bannerHelpers.showError('Error Occurred', 'Something went wrong')
 
       expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
         severity: 'error',
         title: 'Error Occurred',
         message: 'Something went wrong',
-        closable: true,
-        persistent: false
+        closable: true
       })
     })
 
@@ -93,8 +90,7 @@ describe('bannerHelpers', () => {
         severity: 'error',
         title: 'Critical Error',
         message: undefined,
-        closable: true,
-        persistent: false
+        closable: true
       })
     })
   })
@@ -133,8 +129,7 @@ describe('bannerHelpers', () => {
         title: 'Custom Banner',
         message: 'Custom message',
         closable: false,
-        life: 2000,
-        persistent: true
+        life: 2000
       }
 
       bannerHelpers.showCustom(customBanner)

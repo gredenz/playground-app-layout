@@ -39,6 +39,7 @@ describe('Banner.vue', () => {
       const wrapper = createWrapper({
         severity: 'info',
         title: 'Test Banner'
+        }
       })
 
       expect(wrapper.findComponent(Message).exists()).toBe(true)
@@ -50,6 +51,7 @@ describe('Banner.vue', () => {
         severity: 'success',
         title: 'Success!',
         message: 'Operation completed successfully'
+        }
       })
 
       expect(wrapper.text()).toContain('Success!')
@@ -63,6 +65,7 @@ describe('Banner.vue', () => {
           title: 'Error',
           closable: true,
           life: 3000
+        }
       })
 
       const messageComponent = wrapper.findComponent(Message)
@@ -77,6 +80,7 @@ describe('Banner.vue', () => {
           severity: 'warn',
           title: 'Warning',
           icon: 'pi pi-exclamation-triangle'
+        }
       })
 
       const messageComponent = wrapper.findComponent(Message)
@@ -90,6 +94,8 @@ describe('Banner.vue', () => {
         },
         slots: {
           default: '<span>Custom slot content</span>'
+        }
+        }
       })
 
       expect(wrapper.text()).toContain('Custom slot content')
@@ -103,6 +109,7 @@ describe('Banner.vue', () => {
           severity: 'info',
           title: 'Test',
           closable: true
+        }
       })
 
       const messageComponent = wrapper.findComponent(Message)
@@ -117,6 +124,7 @@ describe('Banner.vue', () => {
           severity: 'info',
           title: 'Test',
           life: 1000
+        }
       })
 
       const messageComponent = wrapper.findComponent(Message)
@@ -130,6 +138,7 @@ describe('Banner.vue', () => {
         props: {
           severity: 'info',
           title: 'Test'
+        }
       })
 
       expect(wrapper.findComponent(Message).exists()).toBe(true)
@@ -151,6 +160,7 @@ describe('Banner.vue', () => {
           severity: 'info',
           title: 'Auto-hide test',
           life: 1000
+        }
       })
 
       expect(wrapper.findComponent(Message).exists()).toBe(true)
@@ -168,6 +178,7 @@ describe('Banner.vue', () => {
           severity: 'info',
           title: 'Test',
           life: 5000
+        }
       })
 
       // Manually dismiss before timeout
@@ -189,6 +200,7 @@ describe('Banner.vue', () => {
           severity: 'info',
           title: 'Test',
           life: 0
+        }
       })
 
       expect(setTimeoutSpy).not.toHaveBeenCalled()
@@ -200,6 +212,7 @@ describe('Banner.vue', () => {
       createWrapper({
           severity: 'info',
           title: 'Test'
+        }
       })
 
       expect(setTimeoutSpy).not.toHaveBeenCalled()
@@ -215,6 +228,7 @@ describe('Banner.vue', () => {
           severity: 'info',
           title: 'Test',
           life: 5000
+        }
       })
 
       wrapper.unmount()
@@ -229,6 +243,7 @@ describe('Banner.vue', () => {
         props: {
           severity: 'info',
           title: 'Test'
+        }
       })
 
       const messageComponent = wrapper.findComponent(Message)

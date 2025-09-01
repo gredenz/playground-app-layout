@@ -4,7 +4,6 @@ import type { BannerNotification } from '@/types/banner'
 const activeBanner = ref<BannerNotification | null>(null)
 const dismissedBanners = ref<string[]>([])
 let autoHideTimeout: ReturnType<typeof setTimeout> | null = null
-let isInitialized = false
 
 export function useBanner() {
   function showBanner(banner: Omit<BannerNotification, 'id'>) {
@@ -20,10 +19,6 @@ export function useBanner() {
     
     activeBanner.value = bannerWithId
     
-    if (banner.persistent) {
-      localStorage.setItem('app-banner', JSON.stringify(bannerWithId))
-    }
-    
     if (banner.life && banner.life > 0) {
       clearAutoHideTimeout()
       autoHideTimeout = setTimeout(() => {
@@ -35,11 +30,6 @@ export function useBanner() {
   function dismissBanner() {
     if (activeBanner.value) {
       dismissedBanners.value.push(activeBanner.value.id)
-      
-      if (activeBanner.value.persistent) {
-        localStorage.removeItem('app-banner')
-      }
-      
       clearAutoHideTimeout()
       activeBanner.value = null
     }
@@ -57,35 +47,10 @@ export function useBanner() {
     }
   }
 
-  function loadPersistentBanner() {
-    const savedBanner = localStorage.getItem('app-banner')
-    if (savedBanner) {
-      try {
-        const banner = JSON.parse(savedBanner) as BannerNotification
-        if (!dismissedBanners.value.includes(banner.id)) {
-          activeBanner.value = banner
-        }
-      } catch (error) {
-        console.warn('Failed to load persistent banner:', error)
-        localStorage.removeItem('app-banner')
-      }
-    }
-  }
-
-  // Initialize persistent banner loading only once
-  if (!isInitialized && typeof window !== 'undefined') {
-    isInitialized = true
-    loadPersistentBanner()
-  }
-
-  // Cleanup will be handled by the component that uses this composable
-  // No need for manual cleanup here since timeout is cleared in dismiss/hide functions
-
   return {
     activeBanner: readonly(activeBanner),
     showBanner,
     dismissBanner,
-    hideBanner,
-    loadPersistentBanner
+    hideBanner
   }
 }

@@ -103,14 +103,6 @@
                 > 
                 Auto-hide
               </label>
-              <label class="text-xs flex items-center">
-                <input 
-                  v-model="customBanner.persistent" 
-                  type="checkbox" 
-                  class="mr-1"
-                > 
-                Persistent
-              </label>
             </div>
             <button
               @click="showCustomBanner"
@@ -209,8 +201,7 @@ const customBanner = ref({
   title: '',
   message: '',
   dismissible: true,
-  autoHide: false,
-  persistent: false
+  autoHide: false
 })
 
 const userAgent = computed(() => navigator.userAgent.substring(0, 100) + '...')
@@ -268,8 +259,7 @@ const showCustomBanner = () => {
     title: customBanner.value.title,
     message: customBanner.value.message || undefined,
     closable: customBanner.value.dismissible,
-    life: customBanner.value.autoHide ? 5000 : undefined,
-    persistent: customBanner.value.persistent
+    life: customBanner.value.autoHide ? 5000 : undefined
   }
   
   bannerHelpers.showCustom(bannerConfig)
@@ -280,8 +270,7 @@ const showCustomBanner = () => {
     title: '',
     message: '',
     dismissible: true,
-    autoHide: false,
-    persistent: false
+    autoHide: false
   }
 }
 

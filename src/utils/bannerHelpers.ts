@@ -14,8 +14,7 @@ export const bannerHelpers = {
       severity: 'secondary',
       title: 'Scheduled Maintenance',
       message: message || 'System maintenance is scheduled for tonight at 2:00 AM EST. Some features may be temporarily unavailable.',
-      closable: true,
-      persistent: true
+      closable: true
     })
   },
 
@@ -42,8 +41,7 @@ export const bannerHelpers = {
       severity: 'error',
       title,
       message,
-      closable: true,
-      persistent: false
+      closable: true
     })
   },
 

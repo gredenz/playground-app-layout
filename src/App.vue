@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import { useBanner } from '@/composables/useBanner'
+import AppBar from '@/components/layout/AppBar.vue'
 import Banner from '@/components/ui/Banner.vue'
 import Toast from 'primevue/toast'
 
@@ -8,87 +9,49 @@ const { activeBanner, dismissBanner } = useBanner()
 </script>
 
 <template>
-  <div class="app">
-    <!-- System-wide banner -->
-    <Banner
-      v-if="activeBanner"
-      :severity="activeBanner.severity"
-      :title="activeBanner.title"
-      :message="activeBanner.message"
-      :closable="activeBanner.closable"
-      :life="activeBanner.life"
-      :icon="activeBanner.icon"
-      @dismiss="dismissBanner"
-    />
+  <div class="app min-h-screen flex flex-col bg-gray-50">
+    <!-- Application Bar - Always at top -->
+    <AppBar />
     
-    <!-- Toast messages -->
+    <!-- Banner Area - Below AppBar, above content -->
+    <div v-if="activeBanner" class="banner-container">
+      <Banner
+        :severity="activeBanner.severity"
+        :title="activeBanner.title"
+        :message="activeBanner.message"
+        :closable="activeBanner.closable"
+        :life="activeBanner.life"
+        :icon="activeBanner.icon"
+        @dismiss="dismissBanner"
+      />
+    </div>
+    
+    <!-- Main Content Area -->
+    <main class="flex-1 container mx-auto px-4 py-6">
+      <RouterView />
+    </main>
+    
+    <!-- Toast messages - Floating -->
     <Toast />
-    
-    <!-- Main application content -->
-    <RouterView />
   </div>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
+.banner-container {
+  /* Banner sits below the app bar */
   width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+  z-index: 30;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+main {
+  /* Main content takes remaining space */
+  flex: 1;
+  overflow-y: auto;
 }
 </style>
