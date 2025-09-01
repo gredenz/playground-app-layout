@@ -29,6 +29,8 @@ export const useAppStore = defineStore('app', () => {
       await loadLayoutComponents(tool, layoutMode)
     } catch (error) {
       console.error('Failed to switch tool:', error)
+      // Show user-friendly error message
+      alert(`Failed to activate tool: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       isLoading.value = false
     }

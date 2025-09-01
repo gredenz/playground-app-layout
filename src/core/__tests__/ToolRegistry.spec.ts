@@ -46,15 +46,13 @@ describe('ToolRegistry', () => {
   })
 
   it('should prevent duplicate registration', () => {
-    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    
-    registry.register(mockTool)
     registry.register(mockTool)
     
+    // Should throw error when registering duplicate
+    expect(() => registry.register(mockTool)).toThrow('Tool test-tool is already registered')
+    
+    // Should still only have one tool
     expect(registry.getAllTools()).toHaveLength(1)
-    expect(consoleSpy).toHaveBeenCalledWith('Tool test-tool already registered')
-    
-    consoleSpy.mockRestore()
   })
 
   it('should activate a tool and call lifecycle hooks', async () => {
@@ -115,5 +113,69 @@ describe('ToolRegistry', () => {
     
     expect(registry.getAllTools()).toHaveLength(0)
     expect(registry.getToolById('test-tool')).toBeUndefined()
+  })
+
+  it('should validate tool has required properties', () => {
+    const invalidTool = { id: 'invalid' } as any
+    
+    expect(() => registry.register(invalidTool)).toThrow('Tool must have id and name')
+  })
+
+  it('should validate tool has layouts and defaultLayout', () => {
+    const invalidTool = {
+      id: 'invalid',
+      name: 'Invalid Tool'
+    } as any
+    
+    expect(() => registry.register(invalidTool)).toThrow('Tool invalid must have layouts and defaultLayout')
+  })
+
+  it('should validate defaultLayout exists in layouts', () => {
+    const invalidTool = {
+      id: 'invalid',
+      name: 'Invalid Tool',
+      layouts: { '2col': {} },
+      defaultLayout: '3col' as LayoutMode
+    } as any
+    
+    expect(() => registry.register(invalidTool)).toThrow("Tool invalid: defaultLayout '3col' not found in layouts")
+  })
+
+  it('should notify listeners on tool activation', async () => {
+    const listener = vi.fn()
+    const unsubscribe = registry.onToolChange(listener)
+    
+    registry.register(mockTool)
+    await registry.activate('test-tool')
+    
+    expect(listener).toHaveBeenCalledWith(mockTool)
+    
+    // Cleanup
+    unsubscribe()
+  })
+
+  it('should notify listeners on tool deactivation', async () => {
+    const listener = vi.fn()
+    registry.onToolChange(listener)
+    
+    registry.register(mockTool)
+    await registry.activate('test-tool')
+    await registry.deactivate()
+    
+    expect(listener).toHaveBeenCalledWith(null)
+  })
+
+  it('should allow unsubscribing from tool changes', async () => {
+    const listener = vi.fn()
+    const unsubscribe = registry.onToolChange(listener)
+    
+    // Unsubscribe before activation
+    unsubscribe()
+    
+    registry.register(mockTool)
+    await registry.activate('test-tool')
+    
+    // Listener should not have been called
+    expect(listener).not.toHaveBeenCalled()
   })
 })

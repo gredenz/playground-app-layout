@@ -6,11 +6,31 @@ export class ToolRegistry implements ToolRegistryInterface {
   private activeTool: ShallowRef<ToolPlugin | null> = shallowRef(null)
   // Make tools list reactive so computed properties update
   private toolsList: Ref<ToolPlugin[]> = ref([])
+  // Simple event listeners for tool changes
+  private listeners = new Set<(tool: ToolPlugin | null) => void>()
+  
+  /**
+   * Validates that a tool has all required properties
+   */
+  private validateTool(tool: ToolPlugin): void {
+    if (!tool.id || !tool.name) {
+      throw new Error('Tool must have id and name')
+    }
+    if (!tool.layouts || !tool.defaultLayout) {
+      throw new Error(`Tool ${tool.id} must have layouts and defaultLayout`)
+    }
+    if (!tool.layouts[tool.defaultLayout]) {
+      throw new Error(`Tool ${tool.id}: defaultLayout '${tool.defaultLayout}' not found in layouts`)
+    }
+  }
   
   register(tool: ToolPlugin): void {
+    // Validate tool structure
+    this.validateTool(tool)
+    
+    // Check for duplicates
     if (this.tools.has(tool.id)) {
-      console.warn(`Tool ${tool.id} already registered`)
-      return
+      throw new Error(`Tool ${tool.id} is already registered`)
     }
     
     this.tools.set(tool.id, tool)
@@ -40,6 +60,9 @@ export class ToolRegistry implements ToolRegistryInterface {
     await tool.onActivate?.()
     this.activeTool.value = tool
     
+    // Notify listeners
+    this.notifyListeners(tool)
+    
     return tool
   }
   
@@ -47,7 +70,23 @@ export class ToolRegistry implements ToolRegistryInterface {
     if (this.activeTool.value) {
       await this.activeTool.value.onDeactivate?.()
       this.activeTool.value = null
+      
+      // Notify listeners that no tool is active
+      this.notifyListeners(null)
     }
+  }
+  
+  /**
+   * Subscribe to tool change events
+   * Returns a cleanup function to unsubscribe
+   */
+  onToolChange(callback: (tool: ToolPlugin | null) => void): () => void {
+    this.listeners.add(callback)
+    return () => this.listeners.delete(callback)
+  }
+  
+  private notifyListeners(tool: ToolPlugin | null): void {
+    this.listeners.forEach(callback => callback(tool))
   }
   
   getActiveTool(): ToolPlugin | null {

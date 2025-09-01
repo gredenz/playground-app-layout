@@ -3,35 +3,47 @@
     <!-- 3 Column Layout -->
     <div v-if="appStore.currentLayoutMode === '3col'" class="flex h-full" data-testid="main-panel">
       <div class="flex-1 bg-gray-100">
-        <component :is="appStore.activeComponents.main" v-if="appStore.activeComponents.main" />
-        <div v-else class="p-4">Loading main...</div>
+        <ErrorBoundary>
+          <component :is="appStore.activeComponents.main" v-if="appStore.activeComponents.main" />
+          <div v-else class="p-4">Loading main...</div>
+        </ErrorBoundary>
       </div>
       <div class="w-96 bg-gray-200">
-        <component :is="appStore.activeComponents.middle" v-if="appStore.activeComponents.middle" />
-        <div v-else class="p-4">Loading middle...</div>
+        <ErrorBoundary>
+          <component :is="appStore.activeComponents.middle" v-if="appStore.activeComponents.middle" />
+          <div v-else class="p-4">Loading middle...</div>
+        </ErrorBoundary>
       </div>
       <div class="w-80 bg-gray-300">
-        <component :is="appStore.activeComponents.right" v-if="appStore.activeComponents.right" />
-        <div v-else class="p-4">Loading sidebar...</div>
+        <ErrorBoundary>
+          <component :is="appStore.activeComponents.right" v-if="appStore.activeComponents.right" />
+          <div v-else class="p-4">Loading sidebar...</div>
+        </ErrorBoundary>
       </div>
     </div>
 
     <!-- 2 Column Layout -->
     <div v-else-if="appStore.currentLayoutMode === '2col'" class="flex h-full">
       <div class="flex-1 bg-gray-100">
-        <component :is="appStore.activeComponents.main" v-if="appStore.activeComponents.main" />
-        <div v-else class="p-4">Loading main...</div>
+        <ErrorBoundary>
+          <component :is="appStore.activeComponents.main" v-if="appStore.activeComponents.main" />
+          <div v-else class="p-4">Loading main...</div>
+        </ErrorBoundary>
       </div>
       <div class="w-96 bg-gray-300">
-        <component :is="appStore.activeComponents.right" v-if="appStore.activeComponents.right" />
-        <div v-else class="p-4">Loading sidebar...</div>
+        <ErrorBoundary>
+          <component :is="appStore.activeComponents.right" v-if="appStore.activeComponents.right" />
+          <div v-else class="p-4">Loading sidebar...</div>
+        </ErrorBoundary>
       </div>
     </div>
 
     <!-- Focused Layout -->
     <div v-else-if="appStore.currentLayoutMode === 'focused'" class="h-full">
-      <component :is="appStore.activeComponents.main" v-if="appStore.activeComponents.main" />
-      <div v-else class="p-4">Loading...</div>
+      <ErrorBoundary>
+        <component :is="appStore.activeComponents.main" v-if="appStore.activeComponents.main" />
+        <div v-else class="p-4">Loading...</div>
+      </ErrorBoundary>
     </div>
 
     <!-- Debug Controls -->
@@ -84,6 +96,7 @@
 import { onMounted, computed } from 'vue'
 import { useAppStore } from '@/stores/app.store'
 import { registerAllTools } from '@/plugins'
+import ErrorBoundary from '@/components/ErrorBoundary.vue'
 
 const appStore = useAppStore()
 const layoutModes = ['3col', '2col', 'focused'] as const
