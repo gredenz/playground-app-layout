@@ -126,6 +126,67 @@
           Test different banner types and behaviors. Persistent banners survive page refresh.
         </p>
       </div>
+
+      <!-- Toast System Testing -->
+      <div class="bg-white p-4 rounded-lg shadow">
+        <h2 class="font-semibold text-lg mb-3">Toast System Testing</h2>
+        
+        <!-- Toast Testing Buttons -->
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <button
+            @click="showSuccessToast"
+            class="px-3 py-2 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition-colors"
+          >
+            Success Toast
+          </button>
+          <button
+            @click="showInfoToast"
+            class="px-3 py-2 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors"
+          >
+            Info Toast
+          </button>
+          <button
+            @click="showWarningToast"
+            class="px-3 py-2 bg-yellow-500 text-white rounded text-sm hover:bg-yellow-600 transition-colors"
+          >
+            Warning Toast
+          </button>
+          <button
+            @click="showErrorToast"
+            class="px-3 py-2 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors"
+          >
+            Error Toast
+          </button>
+          <button
+            @click="showOperationSuccess"
+            class="px-3 py-2 bg-emerald-500 text-white rounded text-sm hover:bg-emerald-600 transition-colors"
+          >
+            Operation Success
+          </button>
+          <button
+            @click="showOperationError"
+            class="px-3 py-2 bg-rose-500 text-white rounded text-sm hover:bg-rose-600 transition-colors"
+          >
+            Operation Error
+          </button>
+          <button
+            @click="showNetworkError"
+            class="px-3 py-2 bg-gray-500 text-white rounded text-sm hover:bg-gray-600 transition-colors"
+          >
+            Network Error
+          </button>
+          <button
+            @click="clearAllToasts"
+            class="px-3 py-2 bg-purple-500 text-white rounded text-sm hover:bg-purple-600 transition-colors"
+          >
+            Clear All Toasts
+          </button>
+        </div>
+
+        <p class="text-xs text-gray-500 mt-3">
+          Test different toast notifications. Success/info toasts auto-hide, errors are sticky.
+        </p>
+      </div>
     </div>
   </div>
 </template>
@@ -135,6 +196,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAppStore } from '@/stores/app.store'
 import { useBanner } from '@/composables/useBanner'
 import { bannerHelpers } from '@/utils/bannerHelpers'
+import { toastHelpers } from '@/utils/toastHelpers'
 
 const appStore = useAppStore()
 const { activeBanner } = useBanner()
@@ -221,6 +283,39 @@ const showCustomBanner = () => {
     autoHide: false,
     persistent: false
   }
+}
+
+// Toast testing functions
+const showSuccessToast = () => {
+  toastHelpers.success('Data Saved', 'Your changes have been saved successfully')
+}
+
+const showInfoToast = () => {
+  toastHelpers.info('New Feature', 'Check out our new toast notification system!')
+}
+
+const showWarningToast = () => {
+  toastHelpers.warn('Browser Warning', 'Please update your browser for the best experience')
+}
+
+const showErrorToast = () => {
+  toastHelpers.error('Server Error', 'Unable to connect to the server. Please try again.')
+}
+
+const showOperationSuccess = () => {
+  toastHelpers.operationSuccess('File Upload', 'The file was uploaded and processed')
+}
+
+const showOperationError = () => {
+  toastHelpers.operationError('Database Query', 'Connection timeout occurred')
+}
+
+const showNetworkError = () => {
+  toastHelpers.networkError('Connection lost while syncing data')
+}
+
+const clearAllToasts = () => {
+  toastHelpers.clear()
 }
 
 let timeInterval: ReturnType<typeof setInterval>

@@ -20,6 +20,9 @@ const { activeBanner, dismissBanner } = useBanner()
       @dismiss="dismissBanner"
     />
     
+    <!-- Toast messages -->
+    <Toast />
+    
     <!-- Main application content -->
     <RouterView />
   </div>
