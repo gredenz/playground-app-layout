@@ -1,4 +1,5 @@
-import { useAppStore, type BannerNotification } from '@/stores/app.store'
+import { useAppStore } from '@/stores/app.store'
+import type { BannerNotification } from '@/types/banner'
 
 /**
  * Utility functions for showing common banner notifications
@@ -100,7 +101,6 @@ export const bannerHelpers = {
   }
 }
 
-// Make available globally for easy testing
-if (typeof window !== 'undefined') {
-  ;(window as any).bannerHelpers = bannerHelpers
-}
+// For development and testing convenience
+// In production, prefer importing the helpers directly
+export default bannerHelpers

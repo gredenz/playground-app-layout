@@ -1,17 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed, shallowRef } from 'vue'
 import { toolRegistry } from '@/core/ToolRegistry'
-
-export interface BannerNotification {
-  id: string
-  type: 'info' | 'warning' | 'error' | 'success' | 'maintenance'
-  title: string
-  message?: string
-  dismissible?: boolean
-  autoHide?: boolean
-  autoHideDelay?: number
-  persistent?: boolean // Survives page refresh
-}
+import type { BannerNotification } from '@/types/banner'
 
 export const useAppStore = defineStore('app', () => {
   // State
@@ -44,8 +34,14 @@ export const useAppStore = defineStore('app', () => {
       await loadLayoutComponents(tool, layoutMode)
     } catch (error) {
       console.error('Failed to switch tool:', error)
-      // Show user-friendly error message
-      alert(`Failed to activate tool: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      // Show user-friendly error message via banner
+      showBanner({
+        type: 'error',
+        title: 'Tool Activation Failed',
+        message: `Failed to activate tool: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        dismissible: true,
+        persistent: false
+      })
     } finally {
       isLoading.value = false
     }
@@ -95,9 +91,11 @@ export const useAppStore = defineStore('app', () => {
   
   // Banner actions
   function showBanner(banner: Omit<BannerNotification, 'id'>) {
+    // Create content-based ID for dismissal tracking
+    const contentHash = `${banner.type}-${banner.title}-${banner.message || ''}`.replace(/\s+/g, '-').toLowerCase()
     const bannerWithId: BannerNotification = {
       ...banner,
-      id: `banner-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+      id: contentHash
     }
     
     // Check if banner was previously dismissed (unless it's not dismissible)
@@ -158,6 +156,7 @@ export const useAppStore = defineStore('app', () => {
     activeComponents,
     isLoading,
     activeBanner,
+    dismissedBanners, // Expose for testing
     
     // Computed
     activeTool,

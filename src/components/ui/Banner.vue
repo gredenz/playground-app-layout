@@ -31,7 +31,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, defineEmits } from 'vue'
+import { computed, ref, onMounted, onUnmounted, defineEmits } from 'vue'
+import type { BannerProps } from '@/types/banner'
 
 // Icons - using simple SVG icons instead of external library
 const InfoIcon = {
@@ -58,15 +59,6 @@ const XMarkIcon = {
   template: `<svg viewBox="0 0 20 20" fill="currentColor"><path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" /></svg>`
 }
 
-export interface BannerProps {
-  type: 'info' | 'warning' | 'error' | 'success' | 'maintenance'
-  title: string
-  message?: string
-  dismissible?: boolean
-  autoHide?: boolean
-  autoHideDelay?: number
-}
-
 const props = withDefaults(defineProps<BannerProps>(), {
   dismissible: true,
   autoHide: false,
@@ -78,6 +70,7 @@ const emit = defineEmits<{
 }>()
 
 const isVisible = ref(true)
+let autoHideTimeout: ReturnType<typeof setTimeout> | null = null
 
 const iconComponent = computed(() => {
   const icons = {
@@ -105,13 +98,27 @@ const bannerClasses = computed(() => {
 const dismiss = () => {
   isVisible.value = false
   emit('dismiss')
+  
+  // Clear timeout if banner is manually dismissed
+  if (autoHideTimeout) {
+    clearTimeout(autoHideTimeout)
+    autoHideTimeout = null
+  }
 }
 
 onMounted(() => {
   if (props.autoHide) {
-    setTimeout(() => {
+    autoHideTimeout = setTimeout(() => {
       dismiss()
     }, props.autoHideDelay)
+  }
+})
+
+onUnmounted(() => {
+  // Clean up timeout to prevent memory leaks
+  if (autoHideTimeout) {
+    clearTimeout(autoHideTimeout)
+    autoHideTimeout = null
   }
 })
 </script>
