@@ -133,9 +133,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAppStore } from '@/stores/app.store'
+import { useBanner } from '@/composables/useBanner'
 import { bannerHelpers } from '@/utils/bannerHelpers'
 
 const appStore = useAppStore()
+const { activeBanner } = useBanner()
 const currentTime = ref(new Date().toLocaleString())
 
 // Custom banner form
@@ -156,7 +158,7 @@ const appState = computed(() => JSON.stringify({
   layoutMode: appStore.currentLayoutMode,
   isLoading: appStore.isLoading,
   toolsCount: appStore.availableTools.length,
-  activeBanner: appStore.activeBanner?.type || null
+  activeBanner: activeBanner.value?.type || null
 }, null, 2))
 
 // Banner testing functions

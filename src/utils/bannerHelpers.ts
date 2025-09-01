@@ -1,4 +1,4 @@
-import { useAppStore } from '@/stores/app.store'
+import { useBanner } from '@/composables/useBanner'
 import type { BannerNotification } from '@/types/banner'
 
 /**
@@ -9,8 +9,8 @@ export const bannerHelpers = {
    * Show maintenance notification
    */
   showMaintenance(message?: string) {
-    const appStore = useAppStore()
-    appStore.showBanner({
+    const { showBanner } = useBanner()
+    showBanner({
       type: 'maintenance',
       title: 'Scheduled Maintenance',
       message: message || 'System maintenance is scheduled for tonight at 2:00 AM EST. Some features may be temporarily unavailable.',
@@ -23,8 +23,8 @@ export const bannerHelpers = {
    * Show success notification
    */
   showSuccess(title: string, message?: string) {
-    const appStore = useAppStore()
-    appStore.showBanner({
+    const { showBanner } = useBanner()
+    showBanner({
       type: 'success',
       title,
       message,
@@ -38,8 +38,8 @@ export const bannerHelpers = {
    * Show error notification
    */
   showError(title: string, message?: string) {
-    const appStore = useAppStore()
-    appStore.showBanner({
+    const { showBanner } = useBanner()
+    showBanner({
       type: 'error',
       title,
       message,
@@ -52,8 +52,8 @@ export const bannerHelpers = {
    * Show warning notification
    */
   showWarning(title: string, message?: string) {
-    const appStore = useAppStore()
-    appStore.showBanner({
+    const { showBanner } = useBanner()
+    showBanner({
       type: 'warning',
       title,
       message,
@@ -65,8 +65,8 @@ export const bannerHelpers = {
    * Show info notification
    */
   showInfo(title: string, message?: string) {
-    const appStore = useAppStore()
-    appStore.showBanner({
+    const { showBanner } = useBanner()
+    showBanner({
       type: 'info',
       title,
       message,
@@ -80,24 +80,24 @@ export const bannerHelpers = {
    * Show custom banner
    */
   showCustom(banner: Omit<BannerNotification, 'id'>) {
-    const appStore = useAppStore()
-    appStore.showBanner(banner)
+    const { showBanner } = useBanner()
+    showBanner(banner)
   },
 
   /**
    * Hide any active banner
    */
   hide() {
-    const appStore = useAppStore()
-    appStore.hideBanner()
+    const { hideBanner } = useBanner()
+    hideBanner()
   },
 
   /**
    * Dismiss current banner (will remember dismissal)
    */
   dismiss() {
-    const appStore = useAppStore()
-    appStore.dismissBanner()
+    const { dismissBanner } = useBanner()
+    dismissBanner()
   }
 }
 

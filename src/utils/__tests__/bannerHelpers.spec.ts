@@ -1,33 +1,30 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createPinia, setActivePinia } from 'pinia'
 import { bannerHelpers } from '../bannerHelpers'
-import { useAppStore } from '@/stores/app.store'
+import { useBanner } from '@/composables/useBanner'
 
-// Mock the app store
-vi.mock('@/stores/app.store', () => ({
-  useAppStore: vi.fn()
+// Mock the banner composable
+vi.mock('@/composables/useBanner', () => ({
+  useBanner: vi.fn()
 }))
 
 describe('bannerHelpers', () => {
-  let mockAppStore: any
+  let mockBannerComposable: any
 
   beforeEach(() => {
-    setActivePinia(createPinia())
-    
-    mockAppStore = {
+    mockBannerComposable = {
       showBanner: vi.fn(),
       hideBanner: vi.fn(),
       dismissBanner: vi.fn()
     }
     
-    vi.mocked(useAppStore).mockReturnValue(mockAppStore)
+    vi.mocked(useBanner).mockReturnValue(mockBannerComposable)
   })
 
   describe('showMaintenance', () => {
     it('should show maintenance banner with default message', () => {
       bannerHelpers.showMaintenance()
 
-      expect(mockAppStore.showBanner).toHaveBeenCalledWith({
+      expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
         type: 'maintenance',
         title: 'Scheduled Maintenance',
         message: 'System maintenance is scheduled for tonight at 2:00 AM EST. Some features may be temporarily unavailable.',
@@ -40,7 +37,7 @@ describe('bannerHelpers', () => {
       const customMessage = 'Custom maintenance message'
       bannerHelpers.showMaintenance(customMessage)
 
-      expect(mockAppStore.showBanner).toHaveBeenCalledWith({
+      expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
         type: 'maintenance',
         title: 'Scheduled Maintenance',
         message: customMessage,
@@ -54,7 +51,7 @@ describe('bannerHelpers', () => {
     it('should show success banner with auto-hide', () => {
       bannerHelpers.showSuccess('Operation Complete', 'Your action was successful')
 
-      expect(mockAppStore.showBanner).toHaveBeenCalledWith({
+      expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
         type: 'success',
         title: 'Operation Complete',
         message: 'Your action was successful',
@@ -67,7 +64,7 @@ describe('bannerHelpers', () => {
     it('should show success banner without message', () => {
       bannerHelpers.showSuccess('Success!')
 
-      expect(mockAppStore.showBanner).toHaveBeenCalledWith({
+      expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
         type: 'success',
         title: 'Success!',
         message: undefined,
@@ -82,7 +79,7 @@ describe('bannerHelpers', () => {
     it('should show error banner that is not persistent', () => {
       bannerHelpers.showError('Error Occurred', 'Something went wrong')
 
-      expect(mockAppStore.showBanner).toHaveBeenCalledWith({
+      expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
         type: 'error',
         title: 'Error Occurred',
         message: 'Something went wrong',
@@ -94,7 +91,7 @@ describe('bannerHelpers', () => {
     it('should show error banner without message', () => {
       bannerHelpers.showError('Critical Error')
 
-      expect(mockAppStore.showBanner).toHaveBeenCalledWith({
+      expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
         type: 'error',
         title: 'Critical Error',
         message: undefined,
@@ -108,7 +105,7 @@ describe('bannerHelpers', () => {
     it('should show warning banner', () => {
       bannerHelpers.showWarning('Warning Title', 'Warning message')
 
-      expect(mockAppStore.showBanner).toHaveBeenCalledWith({
+      expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
         type: 'warning',
         title: 'Warning Title',
         message: 'Warning message',
@@ -121,7 +118,7 @@ describe('bannerHelpers', () => {
     it('should show info banner with auto-hide', () => {
       bannerHelpers.showInfo('Information', 'Some helpful info')
 
-      expect(mockAppStore.showBanner).toHaveBeenCalledWith({
+      expect(mockBannerComposable.showBanner).toHaveBeenCalledWith({
         type: 'info',
         title: 'Information',
         message: 'Some helpful info',
@@ -146,7 +143,7 @@ describe('bannerHelpers', () => {
 
       bannerHelpers.showCustom(customBanner)
 
-      expect(mockAppStore.showBanner).toHaveBeenCalledWith(customBanner)
+      expect(mockBannerComposable.showBanner).toHaveBeenCalledWith(customBanner)
     })
   })
 
@@ -154,7 +151,7 @@ describe('bannerHelpers', () => {
     it('should call hideBanner on store', () => {
       bannerHelpers.hide()
 
-      expect(mockAppStore.hideBanner).toHaveBeenCalled()
+      expect(mockBannerComposable.hideBanner).toHaveBeenCalled()
     })
   })
 
@@ -162,7 +159,7 @@ describe('bannerHelpers', () => {
     it('should call dismissBanner on store', () => {
       bannerHelpers.dismiss()
 
-      expect(mockAppStore.dismissBanner).toHaveBeenCalled()
+      expect(mockBannerComposable.dismissBanner).toHaveBeenCalled()
     })
   })
 })
