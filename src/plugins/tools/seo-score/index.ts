@@ -5,7 +5,7 @@ export class SeoScoreTool extends BaseTool {
   readonly id = 'seo-score'
   readonly name = 'SEO Score Analyzer'
   readonly description = 'Analyze and improve your SEO'
-  
+
   // Tool declares what layouts it supports and how to configure them
   readonly layouts: Partial<Record<LayoutMode, ToolLayout>> = {
     '3col': {
@@ -18,7 +18,7 @@ export class SeoScoreTool extends BaseTool {
     '2col': {
       slots: {
         main: () => import('@/components/mainComponents/Editor.vue'),
-        right: () => import('./SeoScorePanel.vue')
+        right: () => import('@/components/ToolList.vue')
       }
     },
     'focused': {
@@ -27,16 +27,16 @@ export class SeoScoreTool extends BaseTool {
       }
     }
   }
-  
+
   readonly defaultLayout: LayoutMode = '3col'
-  
+
   // Tool manages its own state
   private state = {
     score: 0,
     suggestions: [] as string[],
     isAnalyzing: false
   }
-  
+
   // Override lifecycle hooks if needed
   async onActivate() {
     console.log(`Tool ${this.name} activated`)
@@ -45,12 +45,12 @@ export class SeoScoreTool extends BaseTool {
     // Could load saved state, fetch initial data, etc.
     this.validateLayouts() // Use base class helper
   }
-  
+
   async onDeactivate() {
     console.log(`Tool ${this.name} deactivated`)
     // Cleanup, save state, etc.
   }
-  
+
   // Tool provides its own methods
   async analyze(content: string) {
     this.state.isAnalyzing = true
@@ -60,7 +60,7 @@ export class SeoScoreTool extends BaseTool {
     this.state.isAnalyzing = false
     return this.state.score
   }
-  
+
   // Self-registration
   static install() {
     // This is where we'd register with a central registry

@@ -71,11 +71,39 @@ Components are:
 - Cached using `shallowRef` for performance
 - Loaded in parallel when switching tools/layouts
 
+### Tool Structure and Conventions
+
+All tools follow a consistent directory structure under `src/plugins/tools/`:
+
+```
+src/plugins/tools/
+├── seo-score/
+│   ├── components/
+│   │   └── SeoScorePanel.vue
+│   └── index.ts
+├── debug-tool/
+│   ├── components/
+│   │   ├── DebugMainPanel.vue
+│   │   ├── DebugMiddlePanel.vue
+│   │   └── DebugSidebar.vue
+│   └── index.ts
+```
+
+**Tool Naming Conventions:**
+- Directory names: `kebab-case` (e.g., `debug-tool`, `seo-score`)
+- Class names: `PascalCase` with "Tool" suffix (e.g., `DebugTool`, `SeoScoreTool`)
+- Component names: `PascalCase` with descriptive suffixes (e.g., `DebugMainPanel`, `SeoScorePanel`)
+
+**Tool Layout Requirements:**
+- **3col layout**: Must include `ToolList` component in right slot for tool switching
+- **2col layout**: Should include `ToolList` component in right slot for tool switching  
+- **focused layout**: No `ToolList` needed (full-screen mode)
+- All tools should extend `BaseTool` class for consistency and lifecycle management
+
 ### Current Tools
 
-- **SeoScore**: SEO analysis tool
-- **SpecSheetHosting**: Specification sheet tool
-- **NewTool**: Example placeholder tool
+- **SeoScoreTool**: SEO analysis tool with content editor and scoring panel
+- **DebugTool**: System debugging and diagnostic information tool
 
 ### Tech Stack
 
