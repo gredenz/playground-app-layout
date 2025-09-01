@@ -141,3 +141,4 @@ The current architecture provides:
 - **SOLID principles**: Well-structured, maintainable code architecture
 - **Clean code**: Readable, focused functions with early returns
 - **Type safety**: Comprehensive TypeScript usage throughout
+- write tests before working on implementation
