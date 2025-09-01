@@ -2,6 +2,17 @@ import { defineStore } from 'pinia'
 import { ref, computed, shallowRef } from 'vue'
 import { toolRegistry } from '@/core/ToolRegistry'
 
+export interface BannerNotification {
+  id: string
+  type: 'info' | 'warning' | 'error' | 'success' | 'maintenance'
+  title: string
+  message?: string
+  dismissible?: boolean
+  autoHide?: boolean
+  autoHideDelay?: number
+  persistent?: boolean // Survives page refresh
+}
+
 export const useAppStore = defineStore('app', () => {
   // State
   const currentLayoutMode = ref<'3col' | '2col' | 'focused'>('3col')
@@ -11,6 +22,10 @@ export const useAppStore = defineStore('app', () => {
     right?: any
   }>({ main: null })
   const isLoading = ref(false)
+  
+  // Banner state
+  const activeBanner = ref<BannerNotification | null>(null)
+  const dismissedBanners = ref<string[]>([]) // Track dismissed banner IDs
   
   // Actions
   async function switchTool(toolId: string) {
@@ -78,6 +93,61 @@ export const useAppStore = defineStore('app', () => {
     activeComponents.value = components
   }
   
+  // Banner actions
+  function showBanner(banner: Omit<BannerNotification, 'id'>) {
+    const bannerWithId: BannerNotification = {
+      ...banner,
+      id: `banner-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    }
+    
+    // Check if banner was previously dismissed (unless it's not dismissible)
+    if (banner.dismissible !== false && dismissedBanners.value.includes(bannerWithId.id)) {
+      return
+    }
+    
+    activeBanner.value = bannerWithId
+    
+    // Save persistent banners to localStorage
+    if (banner.persistent) {
+      localStorage.setItem('app-banner', JSON.stringify(bannerWithId))
+    }
+  }
+  
+  function dismissBanner() {
+    if (activeBanner.value) {
+      // Track dismissed banner to prevent re-showing
+      dismissedBanners.value.push(activeBanner.value.id)
+      
+      // Remove from localStorage if persistent
+      if (activeBanner.value.persistent) {
+        localStorage.removeItem('app-banner')
+      }
+      
+      activeBanner.value = null
+    }
+  }
+  
+  function hideBanner() {
+    activeBanner.value = null
+  }
+  
+  // Load persistent banner from localStorage on init
+  function loadPersistentBanner() {
+    const savedBanner = localStorage.getItem('app-banner')
+    if (savedBanner) {
+      try {
+        const banner = JSON.parse(savedBanner) as BannerNotification
+        // Only show if not previously dismissed
+        if (!dismissedBanners.value.includes(banner.id)) {
+          activeBanner.value = banner
+        }
+      } catch (error) {
+        console.warn('Failed to load persistent banner:', error)
+        localStorage.removeItem('app-banner')
+      }
+    }
+  }
+
   // Computed
   const activeTool = computed(() => toolRegistry.getActiveTool())
   const availableTools = computed(() => toolRegistry.getAllTools())
@@ -87,6 +157,7 @@ export const useAppStore = defineStore('app', () => {
     currentLayoutMode,
     activeComponents,
     isLoading,
+    activeBanner,
     
     // Computed
     activeTool,
@@ -94,6 +165,12 @@ export const useAppStore = defineStore('app', () => {
     
     // Actions
     switchTool,
-    switchLayoutMode
+    switchLayoutMode,
+    
+    // Banner actions
+    showBanner,
+    dismissBanner,
+    hideBanner,
+    loadPersistentBanner
   }
 })

@@ -1,9 +1,34 @@
 <script setup lang="ts">
-import {  RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
+import { onMounted } from 'vue'
+import { useAppStore } from '@/stores/app.store'
+import Banner from '@/components/ui/Banner.vue'
+
+const appStore = useAppStore()
+
+// Load any persistent banners on app startup
+onMounted(() => {
+  appStore.loadPersistentBanner()
+})
 </script>
 
 <template>
-  <RouterView />
+  <div class="app">
+    <!-- System-wide banner -->
+    <Banner
+      v-if="appStore.activeBanner"
+      :type="appStore.activeBanner.type"
+      :title="appStore.activeBanner.title"
+      :message="appStore.activeBanner.message"
+      :dismissible="appStore.activeBanner.dismissible"
+      :auto-hide="appStore.activeBanner.autoHide"
+      :auto-hide-delay="appStore.activeBanner.autoHideDelay"
+      @dismiss="appStore.dismissBanner"
+    />
+    
+    <!-- Main application content -->
+    <RouterView />
+  </div>
 </template>
 
 <style scoped>
