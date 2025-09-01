@@ -96,7 +96,7 @@
 import { onMounted, computed } from 'vue'
 import { useAppStore } from '@/stores/app.store'
 import { registerAllTools } from '@/plugins'
-import ErrorBoundary from '@/components/ErrorBoundary.vue'
+import ErrorBoundary from '@/components/ui/ErrorBoundary.vue'
 
 const appStore = useAppStore()
 const layoutModes = ['3col', '2col', 'focused'] as const

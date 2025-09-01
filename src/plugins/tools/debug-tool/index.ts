@@ -11,13 +11,13 @@ export class DebugTool extends BaseTool {
       slots: {
         main: () => import('./components/DebugMainPanel.vue'),
         middle: () => import('./components/DebugMiddlePanel.vue'),
-        right: () => import('@/components/ToolList.vue')
+        right: () => import('@/components/shared/ToolList.vue')
       }
     },
     '2col': {
       slots: {
         main: () => import('./components/DebugMainPanel.vue'),
-        right: () => import('@/components/ToolList.vue')
+        right: () => import('@/components/shared/ToolList.vue')
       }
     },
     'focused': {

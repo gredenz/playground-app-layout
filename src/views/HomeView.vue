@@ -4,5 +4,5 @@
 
 <script setup lang="ts">
 // Using new layout manager from core
-import LayoutManager from '@/core/LayoutManager.vue'
+import LayoutManager from '@/components/layout/LayoutManager.vue'
 </script>

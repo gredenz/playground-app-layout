@@ -10,15 +10,15 @@ export class SeoScoreTool extends BaseTool {
   readonly layouts: Partial<Record<LayoutMode, ToolLayout>> = {
     '3col': {
       slots: {
-        main: () => import('@/components/mainComponents/Editor.vue'),
+        main: () => import('@/components/shared/Editor.vue'),
         middle: () => import('./SeoScorePanel.vue'),
-        right: () => import('@/components/ToolList.vue')
+        right: () => import('@/components/shared/ToolList.vue')
       }
     },
     '2col': {
       slots: {
-        main: () => import('@/components/mainComponents/Editor.vue'),
-        right: () => import('@/components/ToolList.vue')
+        main: () => import('@/components/shared/Editor.vue'),
+        right: () => import('@/components/shared/ToolList.vue')
       }
     },
     'focused': {
