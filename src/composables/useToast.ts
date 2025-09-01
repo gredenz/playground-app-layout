@@ -1,7 +1,13 @@
-import { inject } from 'vue'
+import { inject, getCurrentInstance } from 'vue'
 import type { ToastMessage, PrimeVueToastService } from '@/types/toast'
 
 export function useToast() {
+  // Only works inside component setup function
+  const instance = getCurrentInstance()
+  if (!instance) {
+    throw new Error('useToast must be called within a Vue component setup function')
+  }
+  
   const toast = inject<PrimeVueToastService>('$toast')
 
   if (!toast) {

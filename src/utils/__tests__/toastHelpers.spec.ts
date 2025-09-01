@@ -1,45 +1,44 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { toastHelpers } from '../toastHelpers'
-import { useToast } from '@/composables/useToast'
-
-// Mock the toast composable
-vi.mock('@/composables/useToast', () => ({
-  useToast: vi.fn()
-}))
+import { setToastService, getToastService } from '../toastService'
 
 describe('toastHelpers', () => {
-  let mockToastComposable: any
+  let mockToastService: any
 
   beforeEach(() => {
-    mockToastComposable = {
-      success: vi.fn(),
-      info: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn(),
-      addToast: vi.fn(),
-      clearAllToasts: vi.fn()
+    mockToastService = {
+      add: vi.fn(),
+      removeAllGroups: vi.fn(),
+      removeGroup: vi.fn()
     }
     
-    vi.mocked(useToast).mockReturnValue(mockToastComposable)
+    // Set up the mock toast service
+    setToastService(mockToastService)
   })
 
   describe('success', () => {
     it('should show success toast with summary and detail', () => {
       toastHelpers.success('Operation Complete', 'Data saved successfully')
 
-      expect(mockToastComposable.success).toHaveBeenCalledWith(
-        'Operation Complete',
-        'Data saved successfully'
-      )
+      expect(mockToastService.add).toHaveBeenCalledWith({
+        severity: 'success',
+        summary: 'Operation Complete',
+        detail: 'Data saved successfully',
+        life: 3000,
+        closable: true
+      })
     })
 
     it('should show success toast with summary only', () => {
       toastHelpers.success('Success!')
 
-      expect(mockToastComposable.success).toHaveBeenCalledWith(
-        'Success!',
-        undefined
-      )
+      expect(mockToastService.add).toHaveBeenCalledWith({
+        severity: 'success',
+        summary: 'Success!',
+        detail: undefined,
+        life: 3000,
+        closable: true
+      })
     })
   })
 
@@ -47,10 +46,13 @@ describe('toastHelpers', () => {
     it('should show info toast', () => {
       toastHelpers.info('Information', 'Here is some info')
 
-      expect(mockToastComposable.info).toHaveBeenCalledWith(
-        'Information',
-        'Here is some info'
-      )
+      expect(mockToastService.add).toHaveBeenCalledWith({
+        severity: 'info',
+        summary: 'Information',
+        detail: 'Here is some info',
+        life: 3000,
+        closable: true
+      })
     })
   })
 
@@ -58,10 +60,13 @@ describe('toastHelpers', () => {
     it('should show warning toast', () => {
       toastHelpers.warn('Warning', 'Be careful')
 
-      expect(mockToastComposable.warn).toHaveBeenCalledWith(
-        'Warning',
-        'Be careful'
-      )
+      expect(mockToastService.add).toHaveBeenCalledWith({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'Be careful',
+        life: 3000,
+        closable: true
+      })
     })
   })
 
@@ -69,10 +74,13 @@ describe('toastHelpers', () => {
     it('should show error toast', () => {
       toastHelpers.error('Error', 'Something went wrong')
 
-      expect(mockToastComposable.error).toHaveBeenCalledWith(
-        'Error',
-        'Something went wrong'
-      )
+      expect(mockToastService.add).toHaveBeenCalledWith({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Something went wrong',
+        life: 0,
+        closable: true
+      })
     })
   })
 
@@ -88,7 +96,13 @@ describe('toastHelpers', () => {
 
       toastHelpers.custom(customToast)
 
-      expect(mockToastComposable.addToast).toHaveBeenCalledWith(customToast)
+      expect(mockToastService.add).toHaveBeenCalledWith({
+        severity: 'warn',
+        summary: 'Custom Toast',
+        detail: 'Custom message',
+        life: 5000,
+        closable: true
+      })
     })
   })
 
@@ -96,7 +110,7 @@ describe('toastHelpers', () => {
     it('should clear all toasts', () => {
       toastHelpers.clear()
 
-      expect(mockToastComposable.clearAllToasts).toHaveBeenCalled()
+      expect(mockToastService.removeAllGroups).toHaveBeenCalled()
     })
   })
 
@@ -104,19 +118,25 @@ describe('toastHelpers', () => {
     it('should show operation success toast with default detail', () => {
       toastHelpers.operationSuccess('File Upload')
 
-      expect(mockToastComposable.success).toHaveBeenCalledWith(
-        'File Upload Successful',
-        'File Upload completed successfully'
-      )
+      expect(mockToastService.add).toHaveBeenCalledWith({
+        severity: 'success',
+        summary: 'File Upload Successful',
+        detail: 'File Upload completed successfully',
+        life: 3000,
+        closable: true
+      })
     })
 
     it('should show operation success toast with custom detail', () => {
       toastHelpers.operationSuccess('Data Sync', 'All records synced')
 
-      expect(mockToastComposable.success).toHaveBeenCalledWith(
-        'Data Sync Successful',
-        'All records synced'
-      )
+      expect(mockToastService.add).toHaveBeenCalledWith({
+        severity: 'success',
+        summary: 'Data Sync Successful',
+        detail: 'All records synced',
+        life: 3000,
+        closable: true
+      })
     })
   })
 
@@ -124,19 +144,25 @@ describe('toastHelpers', () => {
     it('should show operation error toast with default detail', () => {
       toastHelpers.operationError('Database Query')
 
-      expect(mockToastComposable.error).toHaveBeenCalledWith(
-        'Database Query Failed',
-        'Failed to complete database query'
-      )
+      expect(mockToastService.add).toHaveBeenCalledWith({
+        severity: 'error',
+        summary: 'Database Query Failed',
+        detail: 'Failed to complete database query',
+        life: 0,
+        closable: true
+      })
     })
 
     it('should show operation error toast with custom error message', () => {
       toastHelpers.operationError('API Call', 'Timeout after 30 seconds')
 
-      expect(mockToastComposable.error).toHaveBeenCalledWith(
-        'API Call Failed',
-        'Timeout after 30 seconds'
-      )
+      expect(mockToastService.add).toHaveBeenCalledWith({
+        severity: 'error',
+        summary: 'API Call Failed',
+        detail: 'Timeout after 30 seconds',
+        life: 0,
+        closable: true
+      })
     })
   })
 
@@ -144,19 +170,25 @@ describe('toastHelpers', () => {
     it('should show validation error toast with default message', () => {
       toastHelpers.validationError()
 
-      expect(mockToastComposable.warn).toHaveBeenCalledWith(
-        'Validation Error',
-        'Please check the form for errors'
-      )
+      expect(mockToastService.add).toHaveBeenCalledWith({
+        severity: 'warn',
+        summary: 'Validation Error',
+        detail: 'Please check the form for errors',
+        life: 3000,
+        closable: true
+      })
     })
 
     it('should show validation error toast with custom message', () => {
       toastHelpers.validationError('Email format is invalid')
 
-      expect(mockToastComposable.warn).toHaveBeenCalledWith(
-        'Validation Error',
-        'Email format is invalid'
-      )
+      expect(mockToastService.add).toHaveBeenCalledWith({
+        severity: 'warn',
+        summary: 'Validation Error',
+        detail: 'Email format is invalid',
+        life: 3000,
+        closable: true
+      })
     })
   })
 
@@ -164,19 +196,25 @@ describe('toastHelpers', () => {
     it('should show network error toast with default detail', () => {
       toastHelpers.networkError()
 
-      expect(mockToastComposable.error).toHaveBeenCalledWith(
-        'Network Error',
-        'Please check your internet connection and try again'
-      )
+      expect(mockToastService.add).toHaveBeenCalledWith({
+        severity: 'error',
+        summary: 'Network Error',
+        detail: 'Please check your internet connection and try again',
+        life: 0,
+        closable: true
+      })
     })
 
     it('should show network error toast with custom detail', () => {
       toastHelpers.networkError('API server is unreachable')
 
-      expect(mockToastComposable.error).toHaveBeenCalledWith(
-        'Network Error',
-        'API server is unreachable'
-      )
+      expect(mockToastService.add).toHaveBeenCalledWith({
+        severity: 'error',
+        summary: 'Network Error',
+        detail: 'API server is unreachable',
+        life: 0,
+        closable: true
+      })
     })
   })
 })
