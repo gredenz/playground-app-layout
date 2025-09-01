@@ -40,7 +40,7 @@ export const toastHelpers = {
   /**
    * Show custom toast
    */
-  custom(toast: Omit<ToastMessage, 'id'>) {
+  custom(toast: ToastMessage) {
     const { addToast } = useToast()
     addToast(toast)
   },

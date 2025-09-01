@@ -1,8 +1,8 @@
 import { inject } from 'vue'
-import type { ToastMessage } from '@/types/toast'
+import type { ToastMessage, PrimeVueToastService } from '@/types/toast'
 
 export function useToast() {
-  const toast = inject('$toast') as any
+  const toast = inject<PrimeVueToastService>('$toast')
 
   if (!toast) {
     console.warn('Toast service not available. Make sure ToastService is registered.')
@@ -18,8 +18,8 @@ export function useToast() {
     }
   }
 
-  function addToast(message: Omit<ToastMessage, 'id'>) {
-    toast.add({
+  function addToast(message: ToastMessage) {
+    toast!.add({
       severity: message.severity,
       summary: message.summary,
       detail: message.detail,
@@ -30,14 +30,14 @@ export function useToast() {
 
   function removeToast(id?: string) {
     if (id) {
-      toast.removeGroup(id)
+      toast!.removeGroup(id)
     } else {
-      toast.removeAllGroups()
+      toast!.removeAllGroups()
     }
   }
 
   function clearAllToasts() {
-    toast.removeAllGroups()
+    toast!.removeAllGroups()
   }
 
   // Convenience methods for common severities

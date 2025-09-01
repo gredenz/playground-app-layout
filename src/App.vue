@@ -2,6 +2,7 @@
 import { RouterView } from 'vue-router'
 import { useBanner } from '@/composables/useBanner'
 import Banner from '@/components/ui/Banner.vue'
+import Toast from 'primevue/toast'
 
 const { activeBanner, dismissBanner } = useBanner()
 </script>

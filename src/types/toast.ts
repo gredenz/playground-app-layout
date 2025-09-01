@@ -1,7 +1,6 @@
 export type ToastSeverity = 'success' | 'info' | 'warn' | 'error'
 
 export interface ToastMessage {
-  id: string
   severity: ToastSeverity
   summary: string
   detail?: string
@@ -10,4 +9,20 @@ export interface ToastMessage {
   closable?: boolean // If true, shows close button
 }
 
-export type ToastProps = Omit<ToastMessage, 'id'>
+// PrimeVue ToastService interface
+export interface PrimeVueToastMessage {
+  severity: ToastSeverity
+  summary: string
+  detail?: string
+  life?: number
+  closable?: boolean
+  group?: string
+}
+
+export interface PrimeVueToastService {
+  add(message: PrimeVueToastMessage): void
+  removeAllGroups(): void
+  removeGroup(group: string): void
+}
+
+export type ToastProps = ToastMessage
