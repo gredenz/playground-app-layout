@@ -8,6 +8,8 @@ import PrimeVue from 'primevue/config'
 import Toast from 'primevue/toast'
 import ToastService from 'primevue/toastservice'
 import Message from 'primevue/message'
+import Splitter from 'primevue/splitter'
+import SplitterPanel from 'primevue/splitterpanel'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -17,6 +19,8 @@ app.use(PrimeVue, {
 app.use(ToastService)
 app.component('Toast', Toast)
 app.component('Message', Message)
+app.component('Splitter', Splitter)
+app.component('SplitterPanel', SplitterPanel)
 
 app.use(pinia)
 app.use(router)

@@ -78,3 +78,42 @@
     --p-text-hover-muted-color: var(--p-surface-300);
   }
 }
+
+/* PrimeVue Splitter customization */
+.p-splitter {
+  background: var(--p-surface-50);
+  border: 1px solid var(--p-content-border-color);
+}
+
+.p-splitter-gutter {
+  background: var(--p-surface-200);
+  transition: background 0.2s;
+}
+
+.p-splitter-gutter:hover {
+  background: var(--p-content-hover-background);
+}
+
+.p-splitter-gutter-handle {
+  background: var(--p-surface-400);
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.p-splitter-gutter:hover .p-splitter-gutter-handle {
+  opacity: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .p-splitter {
+    background: var(--p-surface-800);
+  }
+  
+  .p-splitter-gutter {
+    background: var(--p-surface-700);
+  }
+  
+  .p-splitter-gutter:hover {
+    background: var(--p-content-hover-background);
+  }
+}

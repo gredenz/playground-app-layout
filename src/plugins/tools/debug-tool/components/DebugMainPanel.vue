@@ -7,8 +7,8 @@
         @click="toggleDebugMode"
         :class="[
           'px-2 py-1 text-xs rounded border transition-colors',
-          debugMode 
-            ? 'bg-green-600 text-white border-green-500' 
+          debugMode
+            ? 'bg-green-600 text-white border-green-500'
             : 'bg-gray-700 text-gray-300 border-gray-600 hover:bg-gray-600'
         ]"
       >
@@ -26,7 +26,7 @@
   <!-- Teleport debug settings to the AppBar -->
   <Teleport :to="getTeleportSelector('APP_BAR_SETTINGS')">
     <div class="flex items-center space-x-2">
-      <select 
+      <select
         v-model="selectedLogLevel"
         class="bg-gray-800 text-white px-2 py-1 text-xs rounded border border-gray-700 focus:border-blue-400 focus:outline-none"
       >
@@ -43,6 +43,7 @@
     <div class="space-y-4">
       <div class="bg-white p-4 rounded-lg shadow">
         <h2 class="font-semibold text-lg mb-2">System Information</h2>
+
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div><strong>Current Time:</strong> {{ currentTime }}</div>
           <div><strong>User Agent:</strong> {{ userAgent }}</div>
@@ -50,15 +51,15 @@
           <div><strong>Viewport Size:</strong> {{ viewportSize }}</div>
         </div>
       </div>
-      
+
       <div class="bg-white p-4 rounded-lg shadow">
         <h2 class="font-semibold text-lg mb-2">App State</h2>
         <pre class="text-xs bg-gray-100 p-3 rounded overflow-auto max-h-48">{{ appState }}</pre>
       </div>
-      
+
       <div class="bg-white p-4 rounded-lg shadow">
         <h2 class="font-semibold text-lg mb-3">Banner System Testing</h2>
-        
+
         <!-- Preset Banner Buttons -->
         <div class="grid grid-cols-2 gap-3 mb-4">
           <button
@@ -104,8 +105,8 @@
           <h3 class="font-medium text-sm mb-2">Create Custom Banner</h3>
           <div class="space-y-2">
             <div class="flex gap-2">
-              <select 
-                v-model="customBanner.type" 
+              <select
+                v-model="customBanner.type"
                 class="text-xs border rounded px-2 py-1 flex-none"
               >
                 <option value="info">Info</option>
@@ -127,19 +128,19 @@
             ></textarea>
             <div class="flex gap-2 items-center">
               <label class="text-xs flex items-center">
-                <input 
-                  v-model="customBanner.dismissible" 
-                  type="checkbox" 
+                <input
+                  v-model="customBanner.dismissible"
+                  type="checkbox"
                   class="mr-1"
-                > 
+                >
                 Dismissible
               </label>
               <label class="text-xs flex items-center">
-                <input 
-                  v-model="customBanner.autoHide" 
-                  type="checkbox" 
+                <input
+                  v-model="customBanner.autoHide"
+                  type="checkbox"
                   class="mr-1"
-                > 
+                >
                 Auto-hide
               </label>
             </div>
@@ -161,7 +162,7 @@
       <!-- Toast System Testing -->
       <div class="bg-white p-4 rounded-lg shadow">
         <h2 class="font-semibold text-lg mb-3">Toast System Testing</h2>
-        
+
         <!-- Toast Testing Buttons -->
         <div class="grid grid-cols-2 gap-3 mb-4">
           <button
@@ -305,9 +306,9 @@ const showCustomBanner = () => {
     closable: customBanner.value.dismissible,
     life: customBanner.value.autoHide ? 5000 : undefined
   }
-  
+
   bannerHelpers.showCustom(bannerConfig)
-  
+
   // Reset form after creating banner
   customBanner.value = {
     type: 'info',
